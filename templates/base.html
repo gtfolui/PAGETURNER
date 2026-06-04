@@ -394,7 +394,9 @@
     .buddy-cover img { width: 100%; height: 100%; object-fit: cover; border-radius: inherit; }
     .buddy-info { flex: 1; min-width: 0; }
     .buddy-book-title { font-weight: 700; font-size: 14px; color: #1f1135; }
-    .buddy-sub { font-size: 13px; color: #796a91; margin-top: 2px; }
+    .buddy-sub { font-size: 13px; color: #796a91; margin-top: 2px;--color-text-secondary: #796a91; }
+    .buddy-card-link { text-decoration: none; color: inherit; display: flex; gap: 14px; align-items: center; background: #fff; border: 1px solid var(--border); border-radius: 14px; padding: 14px; margin-bottom: 12px; transition: all .15s; }
+    .buddy-card-link:hover { border-color: var(--accent-light); transform: translateY(-1px); box-shadow: 0 6px 16px rgba(99,35,166,.1); }
     .buddy-actions { display: flex; gap: 8px; margin-top: 10px; }
 
     /* ── Request cards ── */
