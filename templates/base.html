@@ -602,7 +602,18 @@
               <div class="bk-stats" id="modalShelfStats"></div>
             </div>
           </div>
-
+          <!-- Buddy Read -->
+  <div class="bk-section">
+  <div class="bk-section-head">Buddy Read</div>
+  <p style="font-size:13px;color:#796a91;margin-bottom:12px;">Read this book together with a friend — track progress and discuss as you go.</p>
+  <button class="btn-secondary" onclick="openBuddyInvite()" style="display:flex;align-items:center;gap:6px;">
+    <i class="ti ti-users"></i> Start Buddy Read
+  </button>
+  <div id="buddyInvitePanel" style="display:none;margin-top:12px;background:#f5f0fa;border:1px solid #ebdff5;border-radius:12px;padding:14px;">
+    <div style="font-size:13px;font-weight:700;color:#1f1135;margin-bottom:10px;">Invite a friend</div>
+    <div id="buddyFriendList" style="display:flex;flex-direction:column;gap:8px;"></div>
+  </div>
+</div>
           <div class="bk-section bk-my-review">
             <div class="bk-section-head">My Review</div>
             <div class="shelf-select">
