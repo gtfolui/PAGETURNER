@@ -1,251 +1,338 @@
 {% extends "base.html" %}
 {% block title %}Buddy Reads · PageTurner{% endblock %}
-
 {% block content %}
 <style>
   :root {
-    --navy:          #1E2A45;
-    --navy-light:    #263454;
-    --gold:          #F5C842;
-    --purple:        #7C5CFC;
-    --purple-light:  #E8E6FD;
-    --purple-text:   #3C3489;
-    --teal:          #56CCF2;
-    --teal-fill:     #D6F5ED;
-    --teal-text:     #0F6E56;
-    --pink-fill:     #FBEAF0;
-    --pink-text:     #72243E;
-    --green:         #16A34A;
-    --amber:         #F59E0B;
-    --white:         #FFFFFF;
-    --bg:            #F4F6FA;
-    --border:        #D8D5FA; /* Adjusted to blend with purple theme */
-    --text-primary:  #3C3489; /* Mapped to purple-text for thematic look */
-    --text-muted:    #655F9D; /* Adjusted for better purple readability */
-    --radius-sm:     8px;
-    --radius-md:     12px;
-    --radius-lg:     16px;
-    --shadow-sm:     0 2px 8px rgba(124,92,252,0.06);
-    --shadow-md:     0 4px 16px rgba(124,92,252,0.14);
+    --navy:         #1E2A45;
+    --navy-light:   #263454;
+    --gold:         #F5C842;
+    --purple:       #7C5CFC;
+    --purple-light: #E8E6FD;
+    --purple-text:  #3C3489;
+    --teal:         #56CCF2;
+    --teal-fill:    #D6F5ED;
+    --teal-text:    #0F6E56;
+    --green:        #16A34A;
+    --amber:        #F59E0B;
+    --white:        #FFFFFF;
+    --bg:           #F4F6FA;
+    --border:       #D8D5FA;
+    --text-primary: #3C3489;
+    --text-muted:   #655F9D;
+    --radius-sm:    8px;
+    --radius-md:    12px;
+    --radius-lg:    16px;
+    --shadow-sm:    0 2px 8px rgba(124,92,252,0.07);
+    --shadow-md:    0 6px 24px rgba(124,92,252,0.16);
+    --shadow-xl:    0 16px 48px rgba(30,42,69,0.18);
   }
 
-  /* ── Layout ── */
-  .pt-page          { background: var(--bg); min-height: 100vh; padding: 28px 32px; }
-  .pt-page-title    { font-family: 'Playfair Display','Georgia',serif; font-size: 26px; font-weight: 700; color: var(--navy); margin: 0 0 4px; }
-  .pt-page-sub      { font-size: 14px; color: var(--text-muted); margin: 0 0 24px; }
+  /* ── Page shell ── */
+  .pt-page       { background:var(--bg); min-height:100vh; padding:28px 32px; }
+  .pt-page-title { font-family:'Playfair Display','Georgia',serif; font-size:26px; font-weight:700; color:var(--navy); margin:0 0 4px; }
+  .pt-page-sub   { font-size:14px; color:var(--text-muted); margin:0 0 24px; }
 
-  .pt-two-col       { display: grid; grid-template-columns: 1fr 360px; gap: 20px; align-items: start; }
-  @media (max-width: 900px) { .pt-two-col { grid-template-columns: 1fr; } }
+  /* ── Two-column grid ── */
+  .pt-two-col { display:grid; grid-template-columns:1fr 360px; gap:20px; align-items:start; }
+  @media(max-width:900px){ .pt-two-col{ grid-template-columns:1fr; } }
 
   /* ── Section label ── */
   .pt-section-label {
-    font-size: 11px; font-weight: 700; text-transform: uppercase;
-    letter-spacing: 1.3px; color: var(--text-muted);
-    margin: 24px 0 12px;
+    font-size:11px; font-weight:700; text-transform:uppercase;
+    letter-spacing:1.3px; color:var(--text-muted); margin:24px 0 12px;
   }
-  .pt-section-label:first-child { margin-top: 0; }
+  .pt-section-label:first-child{ margin-top:0; }
 
   /* ── Base card ── */
   .pt-card {
-    background: var(--purple-light); /* Changed to purple layout background */
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
-    padding: 20px;
-    box-shadow: var(--shadow-sm);
+    background:var(--purple-light); border:1px solid var(--border);
+    border-radius:var(--radius-lg); padding:20px; box-shadow:var(--shadow-sm);
   }
-  .pt-card + .pt-card { margin-top: 12px; }
+  .pt-card+.pt-card{ margin-top:12px; }
   .pt-card-title {
-    font-size: 14px; font-weight: 700; color: var(--text-primary);
-    margin: 0 0 16px; display: flex; align-items: center; gap: 8px;
+    font-size:14px; font-weight:700; color:var(--text-primary);
+    margin:0 0 16px; display:flex; align-items:center; gap:8px;
   }
-  .pt-card-title i { color: var(--purple); font-size: 16px; }
+  .pt-card-title i{ color:var(--purple); font-size:16px; }
 
-  /* ── Buddy list card ── */
+  /* ── Buddy row card ── */
   .pt-buddy-card {
-    background: var(--purple-light); /* Changed to purple layout background */
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
-    padding: 16px;
-    display: flex; align-items: center; gap: 14px;
-    box-shadow: var(--shadow-sm);
-    transition: box-shadow .2s, transform .15s, background-color .2s;
-    text-decoration: none; color: inherit;
-    margin-bottom: 10px;
+    background:var(--purple-light); border:1px solid var(--border);
+    border-radius:var(--radius-lg); padding:16px;
+    display:flex; align-items:center; gap:14px;
+    box-shadow:var(--shadow-sm); transition:box-shadow .2s,transform .15s,background .2s;
+    text-decoration:none; color:inherit; margin-bottom:10px;
   }
-  .pt-buddy-card:hover { box-shadow: var(--shadow-md); transform: translateX(3px); background: #DFDCFA; }
-  .pt-buddy-card.faded { opacity: .65; }
+  .pt-buddy-card:hover{ box-shadow:var(--shadow-md); transform:translateX(3px); background:#DFDCFA; }
+  .pt-buddy-card.faded{ opacity:.65; }
 
   .pt-buddy-cover {
-    width: 52px; height: 74px; border-radius: 6px; flex-shrink: 0;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 8px; font-weight: 700; text-align: center;
-    padding: 4px; overflow: hidden; line-height: 1.3;
+    width:52px; height:74px; border-radius:6px; flex-shrink:0;
+    display:flex; align-items:center; justify-content:center;
+    font-size:8px; font-weight:700; text-align:center; padding:4px; overflow:hidden; line-height:1.3;
   }
-  .pt-buddy-cover img { width: 100%; height: 100%; object-fit: cover; border-radius: 5px; }
+  .pt-buddy-cover img{ width:100%; height:100%; object-fit:cover; border-radius:5px; }
 
-  .pt-buddy-info { flex: 1; min-width: 0; }
+  .pt-buddy-info{ flex:1; min-width:0; }
   .pt-buddy-book-title {
-    font-size: 14px; font-weight: 700; color: var(--text-primary);
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 3px;
+    font-size:14px; font-weight:700; color:var(--text-primary);
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-bottom:3px;
   }
-  .pt-buddy-sub { font-size: 12px; color: var(--text-muted); margin-bottom: 10px; }
-  .pt-buddy-sub strong { color: var(--text-primary); }
+  .pt-buddy-sub{ font-size:12px; color:var(--text-muted); margin-bottom:10px; }
+  .pt-buddy-sub strong{ color:var(--text-primary); }
+  .pt-chevron{ color:var(--text-muted); font-size:14px; flex-shrink:0; margin-left:auto; }
 
-  .pt-chevron { color: var(--text-muted); font-size: 14px; flex-shrink: 0; margin-left: auto; }
+  /* progress rows */
+  .pt-prog-rows{ display:flex; flex-direction:column; gap:6px; }
+  .pt-prog-row{ display:flex; align-items:center; gap:8px; font-size:12px; color:var(--text-muted); }
+  .pt-prog-row>.label{ width:34px; font-weight:700; color:var(--text-primary); font-size:11px; }
+  .pt-prog-bar{ flex:1; height:5px; background:rgba(255,255,255,.55); border-radius:3px; overflow:hidden; }
+  .pt-prog-fill{ height:100%; border-radius:3px; background:var(--purple); transition:width .5s ease; }
+  .pt-prog-fill.alt{ background:var(--teal-text); }
+  .pt-prog-pct{ font-size:11px; min-width:30px; text-align:right; }
 
-  /* Progress rows inside buddy card */
-  .pt-prog-rows { display: flex; flex-direction: column; gap: 6px; }
-  .pt-prog-row  { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text-muted); }
-  .pt-prog-row > .label { width: 34px; font-weight: 700; color: var(--text-primary); font-size: 11px; }
-  .pt-prog-bar  { flex: 1; height: 5px; background: rgba(255, 255, 255, 0.5); border-radius: 3px; overflow: hidden; }
-  .pt-prog-fill { height: 100%; border-radius: 3px; background: var(--purple); }
-  .pt-prog-fill.alt { background: var(--teal-text); }
-  .pt-prog-pct  { font-size: 11px; min-width: 30px; text-align: right; }
-
-  /* Invite action buttons */
-  .pt-actions { display: flex; gap: 8px; }
+  /* ── Buttons ── */
+  .pt-actions{ display:flex; gap:8px; }
   .pt-btn {
-    padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 700;
-    border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 5px;
-    transition: opacity .15s, transform .1s;
+    padding:6px 14px; border-radius:20px; font-size:12px; font-weight:700;
+    border:none; cursor:pointer; display:inline-flex; align-items:center; gap:5px;
+    transition:opacity .15s,transform .1s;
   }
-  .pt-btn:active { transform: scale(.97); }
-  .pt-btn-primary { background: var(--purple); color: var(--white); }
-  .pt-btn-primary:hover { opacity: .85; }
-  .pt-btn-ghost   { background: var(--white); color: var(--text-muted); border: 1px solid var(--border); }
-  .pt-btn-ghost:hover { border-color: var(--purple); color: var(--purple); }
-  .pt-btn-purple  { background: var(--white); color: var(--purple-text); border: 1px solid #ddd6fe; }
-  .pt-btn-purple:hover { background: #ddd6fe; }
-  .pt-btn-full    { width: 100%; justify-content: center; border-radius: var(--radius-sm); }
+  .pt-btn:active{ transform:scale(.97); }
+  .pt-btn-primary{ background:var(--purple); color:var(--white); }
+  .pt-btn-primary:hover{ opacity:.85; }
+  .pt-btn-ghost{ background:var(--white); color:var(--text-muted); border:1px solid var(--border); }
+  .pt-btn-ghost:hover{ border-color:var(--purple); color:var(--purple); }
+  .pt-btn-purple{ background:var(--white); color:var(--purple-text); border:1px solid #ddd6fe; }
+  .pt-btn-purple:hover{ background:#ddd6fe; }
+  .pt-btn-full{ width:100%; justify-content:center; border-radius:var(--radius-sm); }
 
-  /* ── Hero card (first active read) ── */
+  /* ── Hero banner ── */
   .pt-hero {
-    background: var(--purple); /* Swapped Navy Hero with brand main Purple */
-    border-radius: var(--radius-lg);
-    padding: 22px 20px;
-    display: flex; gap: 16px; align-items: flex-start;
-    color: var(--white); position: relative; overflow: hidden;
-    margin-bottom: 10px;
-    box-shadow: var(--shadow-sm);
+    background:var(--purple); border-radius:var(--radius-lg); padding:22px 20px;
+    display:flex; gap:16px; align-items:flex-start; color:var(--white);
+    position:relative; overflow:hidden; margin-bottom:10px; box-shadow:var(--shadow-sm);
   }
   .pt-hero::before {
-    content: ''; position: absolute; top: -50px; right: -50px;
-    width: 180px; height: 180px; background: rgba(255,255,255,0.08); border-radius: 50%;
+    content:''; position:absolute; top:-50px; right:-50px;
+    width:180px; height:180px; background:rgba(255,255,255,.08); border-radius:50%;
   }
   .pt-hero-cover {
-    width: 70px; height: 100px; border-radius: 8px; flex-shrink: 0;
-    overflow: hidden; border: 2px solid rgba(255,255,255,0.25);
-    box-shadow: 0 6px 20px rgba(0,0,0,0.15); background: rgba(255, 255, 255, 0.1);
+    width:70px; height:100px; border-radius:8px; flex-shrink:0; overflow:hidden;
+    border:2px solid rgba(255,255,255,.25); box-shadow:0 6px 20px rgba(0,0,0,.15);
+    background:rgba(255,255,255,.1);
   }
-  .pt-hero-cover img { width: 100%; height: 100%; object-fit: cover; }
-  .pt-hero-info { position: relative; z-index: 1; flex: 1; min-width: 0; }
-  .pt-hero-title { font-family: 'Playfair Display',serif; font-size: 17px; font-weight: 800; color: var(--white); margin: 0 0 3px; }
-  .pt-hero-author { font-size: 12px; color: rgba(255,255,255,0.75); margin: 0 0 10px; }
+  .pt-hero-cover img{ width:100%; height:100%; object-fit:cover; }
+  .pt-hero-info{ position:relative; z-index:1; flex:1; min-width:0; }
+  .pt-hero-title{ font-family:'Playfair Display',serif; font-size:17px; font-weight:800; color:var(--white); margin:0 0 3px; }
+  .pt-hero-author{ font-size:12px; color:rgba(255,255,255,.75); margin:0 0 10px; }
   .pt-hero-tag {
-    display: inline-block; background: rgba(255,255,255,0.2); color: var(--white);
-    font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 20px; margin-bottom: 12px;
+    display:inline-block; background:rgba(255,255,255,.2); color:var(--white);
+    font-size:11px; font-weight:600; padding:3px 10px; border-radius:20px; margin-bottom:12px;
   }
-  .pt-hero-bar-label {
-    display: flex; justify-content: space-between;
-    font-size: 11px; color: rgba(255,255,255,0.8); margin-bottom: 5px;
-  }
-  .pt-hero-bar-label strong { color: var(--white); }
-  .pt-hero-bar { width: 100%; height: 5px; background: rgba(255,255,255,0.25); border-radius: 3px; overflow: hidden; }
-  .pt-hero-bar-fill { height: 100%; background: var(--gold); border-radius: 3px; }
+  .pt-hero-bar-label{ display:flex; justify-content:space-between; font-size:11px; color:rgba(255,255,255,.8); margin-bottom:5px; }
+  .pt-hero-bar-label strong{ color:var(--white); }
+  .pt-hero-bar{ width:100%; height:5px; background:rgba(255,255,255,.25); border-radius:3px; overflow:hidden; }
+  .pt-hero-bar-fill{ height:100%; background:var(--gold); border-radius:3px; transition:width .5s ease; }
 
-  /* Waiting badge */
-  .pt-waiting-badge { font-size: 12px; color: var(--amber); font-weight: 600; }
+  /* ── Waiting badge ── */
+  .pt-waiting-badge{ font-size:12px; color:var(--amber); font-weight:600; }
 
   /* ── Empty state ── */
   .pt-empty {
-    background: var(--purple-light);
-    border: 1px dashed var(--border);
-    border-radius: var(--radius-lg); padding: 40px 20px;
-    text-align: center; color: var(--text-muted);
-    margin-bottom: 10px;
+    background:var(--purple-light); border:1px dashed var(--border);
+    border-radius:var(--radius-lg); padding:40px 20px;
+    text-align:center; color:var(--text-muted); margin-bottom:10px;
   }
-  .pt-empty i    { font-size: 36px; display: block; margin-bottom: 10px; color: var(--border); }
-  .pt-empty h3   { font-size: 15px; font-weight: 700; color: var(--text-primary); margin: 0 0 6px; }
-  .pt-empty p    { font-size: 13px; margin: 0; }
+  .pt-empty i{ font-size:36px; display:block; margin-bottom:10px; color:var(--border); }
+  .pt-empty h3{ font-size:15px; font-weight:700; color:var(--text-primary); margin:0 0 6px; }
+  .pt-empty p{ font-size:13px; margin:0; }
 
-  /* ── Progress sidebar card ── */
-  .pt-prog-user  { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
-  .pt-avatar     {
-    width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0;
-    display: flex; align-items: center; justify-content: center;
-    font-weight: 700; font-size: 15px;
-    background: var(--purple); color: var(--white);
+  /* ── Sidebar: progress ── */
+  .pt-prog-user{ display:flex; align-items:center; gap:12px; margin-bottom:16px; }
+  .pt-avatar {
+    width:40px; height:40px; border-radius:50%; flex-shrink:0;
+    display:flex; align-items:center; justify-content:center;
+    font-weight:700; font-size:15px; background:var(--purple); color:var(--white);
   }
-  .pt-avatar.alt { background: var(--teal-text); color: var(--white); }
-  .pt-prog-name  { flex: 1; }
-  .pt-prog-name .row1 { display: flex; justify-content: space-between; font-size: 13px; font-weight: 700; color: var(--text-primary); margin-bottom: 4px; }
-  .pt-prog-name .pct  { font-weight: 800; color: var(--purple); }
-  .pt-prog-name .pct.alt { color: var(--teal-text); }
-  .pt-prog-bar-full { width: 100%; height: 7px; background: var(--white); border-radius: 4px; overflow: hidden; margin-bottom: 3px; }
-  .pt-prog-bar-fill { height: 100%; border-radius: 4px; background: var(--purple); }
-  .pt-prog-bar-fill.alt { background: var(--teal-text); }
-  .pt-prog-page  { font-size: 11px; color: var(--text-muted); }
+  .pt-avatar.alt{ background:var(--teal-text); }
+  .pt-prog-name{ flex:1; }
+  .pt-prog-name .row1 { display:flex; justify-content:space-between; font-size:13px; font-weight:700; color:var(--text-primary); margin-bottom:4px; }
+  .pt-prog-name .pct{ font-weight:800; color:var(--purple); }
+  .pt-prog-name .pct.alt{ color:var(--teal-text); }
+  .pt-prog-bar-full{ width:100%; height:7px; background:var(--white); border-radius:4px; overflow:hidden; margin-bottom:3px; }
+  .pt-prog-bar-fill{ height:100%; border-radius:4px; background:var(--purple); transition:width .5s ease; }
+  .pt-prog-bar-fill.alt{ background:var(--teal-text); }
+  .pt-prog-page{ font-size:11px; color:var(--text-muted); }
 
-  /* ── Discussion card ── */
-  .pt-discussion { display: flex; flex-direction: column; height: 380px; }
-  .pt-messages   { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; margin-bottom: 12px; padding-right: 4px; }
-  .pt-msg        { display: flex; align-items: flex-start; gap: 9px; }
-  .pt-msg-avatar { width: 30px; height: 30px; border-radius: 50%; background: var(--purple); color: var(--white); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 12px; flex-shrink: 0; }
-  .pt-msg-body .name  { font-size: 12px; font-weight: 700; color: var(--text-primary); margin-bottom: 3px; }
-  .pt-msg-body .name span { font-weight: 400; color: var(--text-muted); margin-left: 6px; font-size: 11px; }
-  .pt-msg-bubble { background: var(--white); border: 1px solid var(--border); border-radius: 12px; border-top-left-radius: 3px; padding: 8px 12px; font-size: 13px; color: var(--navy); line-height: 1.5; }
-  .pt-msg-input-row { display: flex; gap: 8px; align-items: center; }
+  /* ── Discussion ── */
+  .pt-discussion{ display:flex; flex-direction:column; height:380px; }
+  .pt-messages{ flex:1; overflow-y:auto; display:flex; flex-direction:column; gap:12px; margin-bottom:12px; padding-right:4px; }
+  .pt-messages::-webkit-scrollbar{ width:4px; }
+  .pt-messages::-webkit-scrollbar-thumb{ background:var(--border); border-radius:2px; }
+
+  .pt-msg{ display:flex; align-items:flex-start; gap:9px; }
+  .pt-msg.mine{ flex-direction:row-reverse; }
+  .pt-msg-avatar {
+    width:30px; height:30px; border-radius:50%; background:var(--purple); color:var(--white);
+    display:flex; align-items:center; justify-content:center; font-weight:700; font-size:12px; flex-shrink:0;
+  }
+  .pt-msg.mine .pt-msg-avatar{ background:var(--navy); }
+  .pt-msg-body .name{ font-size:12px; font-weight:700; color:var(--text-primary); margin-bottom:3px; }
+  .pt-msg.mine .pt-msg-body .name{ text-align:right; }
+  .pt-msg-body .name span{ font-weight:400; color:var(--text-muted); margin-left:6px; font-size:11px; }
+  .pt-msg-bubble {
+    background:var(--white); border:1px solid var(--border);
+    border-radius:12px; border-top-left-radius:3px;
+    padding:8px 12px; font-size:13px; color:var(--navy); line-height:1.5;
+    max-width:240px;
+  }
+  .pt-msg.mine .pt-msg-bubble { background:var(--purple); color:var(--white); border-color:var(--purple); border-top-left-radius:12px; border-top-right-radius:3px; }
+
+  .pt-msg-input-row{ display:flex; gap:8px; align-items:center; }
   .pt-msg-input {
-    flex: 1; background: var(--white); border: 1.5px solid var(--border);
-    border-radius: 99px; padding: 9px 16px; font-size: 13px;
-    outline: none; color: var(--navy); transition: border-color .2s;
-    font-family: inherit;
+    flex:1; background:var(--white); border:1.5px solid var(--border);
+    border-radius:99px; padding:9px 16px; font-size:13px;
+    outline:none; color:var(--navy); transition:border-color .2s; font-family:inherit;
   }
-  .pt-msg-input:focus { border-color: var(--purple); }
+  .pt-msg-input:focus{ border-color:var(--purple); }
   .pt-msg-send {
-    width: 38px; height: 38px; background: var(--purple); border: none; border-radius: 50%;
-    color: var(--white); display: flex; align-items: center; justify-content: center;
-    cursor: pointer; transition: background .2s; flex-shrink: 0; font-size: 14px;
+    width:38px; height:38px; background:var(--purple); border:none; border-radius:50%;
+    color:var(--white); display:flex; align-items:center; justify-content:center;
+    cursor:pointer; transition:background .2s; flex-shrink:0; font-size:14px;
   }
-  .pt-msg-send:hover { background: var(--purple-text); }
+  .pt-msg-send:hover{ background:var(--purple-text); }
 
   /* ── Milestones ── */
-  .pt-milestone-list { position: relative; padding-left: 28px; }
-  .pt-milestone-list::before { content: ''; position: absolute; left: 10px; top: 6px; bottom: 6px; width: 2px; background: var(--border); }
-  .pt-milestone-item { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; position: relative; }
-  .pt-milestone-item:last-child { margin-bottom: 0; }
-  .pt-milestone-dot {
-    position: absolute; left: -28px;
-    width: 20px; height: 20px; border-radius: 50%;
-    display: flex; align-items: center; justify-content: center; font-size: 10px; z-index: 1;
+  .pt-milestone-list{ position:relative; padding-left:28px; }
+  .pt-milestone-list::before {
+    content:''; position:absolute; left:10px; top:6px; bottom:6px; width:2px; background:var(--border);
   }
-  .pt-milestone-dot.done    { background: var(--green); color: var(--white); }
-  .pt-milestone-dot.pending { background: var(--white); border: 2px solid var(--border); }
-  .pt-milestone-label       { font-size: 13px; font-weight: 500; color: var(--text-primary); }
-  .pt-milestone-label.pending { color: var(--text-muted); }
-  .pt-milestone-date        { font-size: 12px; color: var(--text-muted); }
+  .pt-milestone-item { display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; position:relative; }
+  .pt-milestone-item:last-child{ margin-bottom:0; }
+  .pt-milestone-dot {
+    position:absolute; left:-28px; width:20px; height:20px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center; font-size:10px; z-index:1;
+  }
+  .pt-milestone-dot.done{ background:var(--green); color:var(--white); }
+  .pt-milestone-dot.pending{ background:var(--white); border:2px solid var(--border); }
+  .pt-milestone-label{ font-size:13px; font-weight:500; color:var(--text-primary); }
+  .pt-milestone-label.pending{ color:var(--text-muted); }
+  .pt-milestone-date{ font-size:12px; color:var(--text-muted); }
 
   /* ── Invite CTA ── */
   .pt-invite-cta {
-    background: var(--purple); /* Swapped out Navy with main brand Purple */
-    border-radius: var(--radius-lg);
-    padding: 22px 20px; text-align: center; color: var(--white);
-    position: relative; overflow: hidden; margin-top: 12px;
-    box-shadow: var(--shadow-sm);
+    background:var(--purple); border-radius:var(--radius-lg); padding:22px 20px;
+    text-align:center; color:var(--white); position:relative; overflow:hidden;
+    margin-top:12px; box-shadow:var(--shadow-sm);
   }
   .pt-invite-cta::before {
-    content: ''; position: absolute; top: -40px; right: -40px;
-    width: 120px; height: 120px; background: rgba(255,255,255,0.08); border-radius: 50%;
+    content:''; position:absolute; top:-40px; right:-40px;
+    width:120px; height:120px; background:rgba(255,255,255,.08); border-radius:50%;
   }
-  .pt-invite-cta i    { font-size: 28px; display: block; margin-bottom: 10px; opacity: .9; }
-  .pt-invite-cta p    { font-size: 13px; font-weight: 700; margin: 0 0 14px; position: relative; z-index: 1; }
-  .pt-invite-btn      {
-    display: block; width: 100%; padding: 10px; border-radius: var(--radius-sm);
-    background: var(--gold); color: var(--navy); font-weight: 800; font-size: 13px;
-    border: none; cursor: pointer; position: relative; z-index: 1;
-    transition: opacity .15s;
+  .pt-invite-cta i{ font-size:28px; display:block; margin-bottom:10px; opacity:.9; }
+  .pt-invite-cta p{ font-size:13px; font-weight:700; margin:0 0 14px; position:relative; z-index:1; }
+  .pt-invite-btn {
+    display:block; width:100%; padding:10px; border-radius:var(--radius-sm);
+    background:var(--gold); color:var(--navy); font-weight:800; font-size:13px;
+    border:none; cursor:pointer; position:relative; z-index:1; transition:opacity .15s;
   }
-  .pt-invite-btn:hover { opacity: .88; }
+  .pt-invite-btn:hover{ opacity:.88; }
+
+  /* ═══════════════════════════════
+     MODALS
+  ═══════════════════════════════ */
+  .pt-modal-backdrop {
+    display:none; position:fixed; inset:0; background:rgba(30,42,69,.45);
+    backdrop-filter:blur(3px); z-index:900; align-items:center; justify-content:center;
+  }
+  .pt-modal-backdrop.open{ display:flex; }
+  .pt-modal {
+    background:var(--white); border-radius:var(--radius-lg); padding:28px;
+    width:100%; max-width:460px; box-shadow:var(--shadow-xl);
+    animation:modalIn .22s ease;
+  }
+  @keyframes modalIn{ from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
+  .pt-modal-header{ display:flex; align-items:center; justify-content:space-between; margin-bottom:20px; }
+  .pt-modal-title{ font-family:'Playfair Display',serif; font-size:18px; font-weight:700; color:var(--navy); }
+  .pt-modal-close {
+    width:32px; height:32px; border-radius:50%; border:none; background:var(--bg);
+    color:var(--text-muted); font-size:18px; cursor:pointer; display:flex;
+    align-items:center; justify-content:center; transition:background .15s;
+  }
+  .pt-modal-close:hover{ background:var(--border); }
+
+  /* Progress update modal */
+  .pt-slider-label{ font-size:13px; font-weight:600; color:var(--navy); margin-bottom:8px; }
+  .pt-slider-row{ display:flex; align-items:center; gap:14px; margin-bottom:20px; }
+  .pt-slider-row input[type=range]{ flex:1; accent-color:var(--purple); }
+  .pt-slider-val{ font-size:16px; font-weight:800; color:var(--purple); min-width:46px; text-align:right; }
+  .pt-page-input-row{ display:flex; align-items:center; gap:10px; margin-bottom:24px; }
+  .pt-page-input-row label{ font-size:13px; font-weight:600; color:var(--navy); white-space:nowrap; }
+  .pt-page-input {
+    flex:1; border:1.5px solid var(--border); border-radius:var(--radius-sm);
+    padding:8px 12px; font-size:14px; font-family:inherit; color:var(--navy); outline:none;
+    transition:border-color .2s;
+  }
+  .pt-page-input:focus{ border-color:var(--purple); }
+  .pt-save-btn {
+    width:100%; padding:12px; border-radius:var(--radius-md);
+    background:var(--purple); color:var(--white); font-weight:800; font-size:14px;
+    border:none; cursor:pointer; transition:opacity .15s;
+  }
+  .pt-save-btn:hover{ opacity:.88; }
+  .pt-save-btn:disabled{ opacity:.5; cursor:not-allowed; }
+
+  /* Milestones modal */
+  .pt-milestone-full .pt-milestone-item{ padding:4px 0; }
+  .pt-add-milestone-row{ display:flex; gap:8px; margin-top:16px; }
+  .pt-add-milestone-input {
+    flex:1; border:1.5px solid var(--border); border-radius:var(--radius-sm);
+    padding:8px 12px; font-size:13px; font-family:inherit; color:var(--navy); outline:none;
+    transition:border-color .2s;
+  }
+  .pt-add-milestone-input:focus{ border-color:var(--purple); }
+
+  /* Invite modal */
+  .pt-friend-list{ display:flex; flex-direction:column; gap:8px; max-height:280px; overflow-y:auto; margin-bottom:16px; }
+  .pt-friend-row {
+    display:flex; align-items:center; gap:12px; padding:10px 12px;
+    border:1px solid var(--border); border-radius:var(--radius-md);
+    background:var(--bg); transition:border-color .15s, background .15s;
+  }
+  .pt-friend-row:hover{ border-color:var(--purple); background:var(--purple-light); }
+  .pt-friend-avatar {
+    width:36px; height:36px; border-radius:50%; background:var(--purple); color:var(--white);
+    display:flex; align-items:center; justify-content:center; font-weight:700; font-size:14px; flex-shrink:0;
+  }
+  .pt-friend-info{ flex:1; }
+  .pt-friend-name{ font-size:13px; font-weight:700; color:var(--navy); }
+  .pt-friend-handle{ font-size:11px; color:var(--text-muted); }
+  .pt-invite-friend-btn {
+    padding:5px 14px; border-radius:20px; font-size:12px; font-weight:700;
+    border:1.5px solid var(--purple); color:var(--purple); background:transparent;
+    cursor:pointer; transition:all .15s; white-space:nowrap;
+  }
+  .pt-invite-friend-btn:hover, .pt-invite-friend-btn.sent {
+    background:var(--purple); color:var(--white);
+  }
+  .pt-invite-friend-btn.sent{ border-color:var(--purple); cursor:default; }
+  .pt-search-input {
+    width:100%; border:1.5px solid var(--border); border-radius:var(--radius-md);
+    padding:9px 14px; font-size:13px; font-family:inherit; color:var(--navy);
+    outline:none; margin-bottom:12px; transition:border-color .2s; box-sizing:border-box;
+  }
+  .pt-search-input:focus{ border-color:var(--purple); }
+
+  /* Toast */
+  .pt-toast {
+    position:fixed; bottom:28px; left:50%; transform:translateX(-50%) translateY(20px);
+    background:var(--navy); color:var(--white); padding:10px 22px;
+    border-radius:99px; font-size:13px; font-weight:600;
+    box-shadow:var(--shadow-md); opacity:0; transition:opacity .25s, transform .25s;
+    z-index:999; pointer-events:none; white-space:nowrap;
+  }
+  .pt-toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
 </style>
 
 <div class="pt-page">
@@ -254,7 +341,7 @@
 
   <div class="pt-two-col">
 
-    <!-- ── Left column ── -->
+    <!-- ── LEFT COLUMN ── -->
     <div>
 
       {% if incoming %}
@@ -262,22 +349,15 @@
         {% for d in incoming %}
           <div class="pt-buddy-card" id="br-{{ d.br.id }}">
             <div class="pt-buddy-cover" style="background:{{ d.br.book.cover_bg }}">
-              {% if d.br.book.cover_url %}
-                <img src="{{ d.br.book.cover_url }}" alt="{{ d.br.book.title }}">
-              {% else %}
-                <span style="color:{{ d.br.book.cover_color }}">{{ d.br.book.title|truncatechars:20 }}</span>
-              {% endif %}
+              {% if d.br.book.cover_url %}<img src="{{ d.br.book.cover_url }}" alt="{{ d.br.book.title }}">
+              {% else %}<span style="color:{{ d.br.book.cover_color }}">{{ d.br.book.title|truncatechars:20 }}</span>{% endif %}
             </div>
             <div class="pt-buddy-info">
               <div class="pt-buddy-book-title">{{ d.br.book.title }}</div>
               <div class="pt-buddy-sub"><strong>{{ d.other.profile.display_name }}</strong> invited you to read this together.</div>
               <div class="pt-actions">
-                <button class="pt-btn pt-btn-primary" onclick="buddyRespond({{ d.br.id }}, 'accept')">
-                  <i class="ti ti-check"></i> Accept
-                </button>
-                <button class="pt-btn pt-btn-ghost" onclick="buddyRespond({{ d.br.id }}, 'decline')">
-                  <i class="ti ti-x"></i> Decline
-                </button>
+                <button class="pt-btn pt-btn-primary" onclick="buddyRespond({{ d.br.id }},'accept')"><i class="ti ti-check"></i> Accept</button>
+                <button class="pt-btn pt-btn-ghost"   onclick="buddyRespond({{ d.br.id }},'decline')"><i class="ti ti-x"></i> Decline</button>
               </div>
             </div>
           </div>
@@ -289,12 +369,9 @@
       {% if active_reads %}
         {% for d in active_reads %}
           {% if forloop.first %}
-            <!-- Hero for first active read -->
-            <div class="pt-hero">
+            <div class="pt-hero" id="heroCard">
               <div class="pt-hero-cover">
-                {% if d.br.book.cover_url %}
-                  <img src="{{ d.br.book.cover_url }}" alt="{{ d.br.book.title }}">
-                {% endif %}
+                {% if d.br.book.cover_url %}<img src="{{ d.br.book.cover_url }}" alt="{{ d.br.book.title }}">{% endif %}
               </div>
               <div class="pt-hero-info">
                 <div class="pt-hero-title">{{ d.br.book.title }}</div>
@@ -302,21 +379,16 @@
                 <span class="pt-hero-tag">Reading with {{ d.other.profile.display_name }}</span>
                 <div class="pt-hero-bar-label">
                   <span>Your progress</span>
-                  <strong>{{ d.my_progress }}%</strong>
+                  <strong id="heroMyPct">{{ d.my_progress }}%</strong>
                 </div>
-                <div class="pt-hero-bar">
-                  <div class="pt-hero-bar-fill" style="width:{{ d.my_progress }}%"></div>
-                </div>
+                <div class="pt-hero-bar"><div class="pt-hero-bar-fill" id="heroMyBar" style="width:{{ d.my_progress }}%"></div></div>
               </div>
             </div>
           {% else %}
             <a href="{% url 'books:buddy_detail' d.br.id %}" class="pt-buddy-card">
               <div class="pt-buddy-cover" style="background:{{ d.br.book.cover_bg }}">
-                {% if d.br.book.cover_url %}
-                  <img src="{{ d.br.book.cover_url }}" alt="{{ d.br.book.title }}">
-                {% else %}
-                  <span style="color:{{ d.br.book.cover_color }}">{{ d.br.book.title|truncatechars:20 }}</span>
-                {% endif %}
+                {% if d.br.book.cover_url %}<img src="{{ d.br.book.cover_url }}" alt="{{ d.br.book.title }}">
+                {% else %}<span style="color:{{ d.br.book.cover_color }}">{{ d.br.book.title|truncatechars:20 }}</span>{% endif %}
               </div>
               <div class="pt-buddy-info">
                 <div class="pt-buddy-book-title">{{ d.br.book.title }}</div>
@@ -346,10 +418,10 @@
         </div>
       {% endif %}
 
-      <!-- Milestones -->
+      <!-- Milestones card -->
       <div class="pt-card" style="margin-top:12px">
         <div class="pt-card-title"><i class="ti ti-flag"></i> Milestones</div>
-        <div class="pt-milestone-list">
+        <div class="pt-milestone-list" id="milestoneListMain">
           <div class="pt-milestone-item">
             <div class="pt-milestone-dot done"><i class="ti ti-check"></i></div>
             <span class="pt-milestone-label">Started BuddyRead</span>
@@ -371,7 +443,9 @@
             <span class="pt-milestone-date">—</span>
           </div>
         </div>
-        <button class="pt-btn pt-btn-purple pt-btn-full" style="margin-top:14px">View All Milestones</button>
+        <button class="pt-btn pt-btn-purple pt-btn-full" style="margin-top:14px" onclick="openMilestoneModal()">
+          <i class="ti ti-list-check"></i> View All Milestones
+        </button>
       </div>
 
       {% if pending_sent %}
@@ -379,18 +453,12 @@
         {% for d in pending_sent %}
           <div class="pt-buddy-card">
             <div class="pt-buddy-cover" style="background:{{ d.br.book.cover_bg }}">
-              {% if d.br.book.cover_url %}
-                <img src="{{ d.br.book.cover_url }}" alt="{{ d.br.book.title }}">
-              {% else %}
-                <span style="color:{{ d.br.book.cover_color }}">{{ d.br.book.title|truncatechars:20 }}</span>
-              {% endif %}
+              {% if d.br.book.cover_url %}<img src="{{ d.br.book.cover_url }}" alt="{{ d.br.book.title }}">
+              {% else %}<span style="color:{{ d.br.book.cover_color }}">{{ d.br.book.title|truncatechars:20 }}</span>{% endif %}
             </div>
             <div class="pt-buddy-info">
               <div class="pt-buddy-book-title">{{ d.br.book.title }}</div>
-              <div class="pt-buddy-sub">
-                Sent to <strong>{{ d.other.profile.display_name }}</strong>
-                <span class="pt-waiting-badge"> — waiting…</span>
-              </div>
+              <div class="pt-buddy-sub">Sent to <strong>{{ d.other.profile.display_name }}</strong><span class="pt-waiting-badge"> — waiting…</span></div>
             </div>
           </div>
         {% endfor %}
@@ -401,11 +469,8 @@
         {% for d in finished %}
           <a href="{% url 'books:buddy_detail' d.br.id %}" class="pt-buddy-card faded">
             <div class="pt-buddy-cover" style="background:{{ d.br.book.cover_bg }}">
-              {% if d.br.book.cover_url %}
-                <img src="{{ d.br.book.cover_url }}" alt="{{ d.br.book.title }}">
-              {% else %}
-                <span style="color:{{ d.br.book.cover_color }}">{{ d.br.book.title|truncatechars:20 }}</span>
-              {% endif %}
+              {% if d.br.book.cover_url %}<img src="{{ d.br.book.cover_url }}" alt="{{ d.br.book.title }}">
+              {% else %}<span style="color:{{ d.br.book.cover_color }}">{{ d.br.book.title|truncatechars:20 }}</span>{% endif %}
             </div>
             <div class="pt-buddy-info">
               <div class="pt-buddy-book-title">{{ d.br.book.title }}</div>
@@ -418,7 +483,7 @@
 
     </div><!-- /left -->
 
-    <!-- ── Right column ── -->
+    <!-- ── RIGHT COLUMN ── -->
     <div>
 
       <!-- Progress card -->
@@ -429,24 +494,24 @@
             <div class="pt-prog-user">
               <div class="pt-avatar">{{ request.user.username|first|upper }}</div>
               <div class="pt-prog-name">
-                <div class="row1"><span>You</span><span class="pct">{{ d.my_progress }}%</span></div>
-                <div class="pt-prog-bar-full"><div class="pt-prog-bar-fill" style="width:{{ d.my_progress }}%"></div></div>
-                <div class="pt-prog-page">Page {{ d.my_page|default:"—" }}</div>
+                <div class="row1"><span>You</span><span class="pct" id="sideMyPct">{{ d.my_progress }}%</span></div>
+                <div class="pt-prog-bar-full"><div class="pt-prog-bar-fill" id="sideMyBar" style="width:{{ d.my_progress }}%"></div></div>
+                <div class="pt-prog-page" id="sideMyPage">Page {{ d.my_page|default:"—" }}</div>
               </div>
             </div>
             <div class="pt-prog-user">
               <div class="pt-avatar alt">{{ d.other.profile.initials }}</div>
               <div class="pt-prog-name">
-                <div class="row1"><span>{{ d.other.profile.display_name }}</span><span class="pct alt">{{ d.other_progress }}%</span></div>
-                <div class="pt-prog-bar-full"><div class="pt-prog-bar-fill alt" style="width:{{ d.other_progress }}%"></div></div>
-                <div class="pt-prog-page">Page {{ d.other_page|default:"—" }}</div>
+                <div class="row1"><span>{{ d.other.profile.display_name }}</span><span class="pct alt" id="sideBuddyPct">{{ d.other_progress }}%</span></div>
+                <div class="pt-prog-bar-full"><div class="pt-prog-bar-fill alt" id="sideBuddyBar" style="width:{{ d.other_progress }}%"></div></div>
+                <div class="pt-prog-page" id="sideBuddyPage">Page {{ d.other_page|default:"—" }}</div>
               </div>
             </div>
           {% endwith %}
         {% else %}
           <p style="font-size:13px;color:var(--text-muted);text-align:center;padding:16px 0">No active buddy read yet.</p>
         {% endif %}
-        <button class="pt-btn pt-btn-purple pt-btn-full" style="margin-top:4px">
+        <button class="pt-btn pt-btn-purple pt-btn-full" style="margin-top:4px" onclick="openProgressModal()">
           <i class="ti ti-edit"></i> Update Progress
         </button>
       </div>
@@ -459,7 +524,7 @@
             {% if active_reads %}
               {% with d=active_reads.0 %}
                 {% for msg in d.messages %}
-                  <div class="pt-msg">
+                  <div class="pt-msg {% if msg.user == request.user %}mine{% endif %}">
                     <div class="pt-msg-avatar">{{ msg.user.username|first|upper }}</div>
                     <div class="pt-msg-body">
                       <div class="name">{{ msg.user.username }} <span>{{ msg.created_at|date:"M j, g:i a" }}</span></div>
@@ -485,47 +550,365 @@
       <div class="pt-invite-cta">
         <i class="ti ti-user-plus"></i>
         <p>Invite a friend and start a BuddyRead!</p>
-        <button class="pt-invite-btn">Invite Now</button>
+        <button class="pt-invite-btn" onclick="openInviteModal()">Invite Now</button>
       </div>
 
     </div><!-- /right -->
   </div><!-- /two-col -->
 </div><!-- /pt-page -->
 
+<!-- ═══════════════════════════════════════
+     MODAL: Update Progress
+════════════════════════════════════════ -->
+<div class="pt-modal-backdrop" id="progressModal">
+  <div class="pt-modal">
+    <div class="pt-modal-header">
+      <div class="pt-modal-title">Update Your Progress</div>
+      <button class="pt-modal-close" onclick="closeModal('progressModal')"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="pt-slider-label">Reading progress</div>
+    <div class="pt-slider-row">
+      <input type="range" min="0" max="100" value="50" id="progSlider" oninput="onSlider(this.value)">
+      <span class="pt-slider-val" id="progSliderVal">50%</span>
+    </div>
+    <div class="pt-page-input-row">
+      <label>Current page</label>
+      <input type="number" class="pt-page-input" id="progPageInput" min="1" placeholder="e.g. 142" oninput="onPageInput(this.value)">
+      <span style="font-size:13px;color:var(--text-muted)" id="progTotalPages"></span>
+    </div>
+    <button class="pt-save-btn" id="progSaveBtn" onclick="saveProgress()">
+      <i class="ti ti-device-floppy"></i> Save Progress
+    </button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     MODAL: All Milestones
+════════════════════════════════════════ -->
+<div class="pt-modal-backdrop" id="milestoneModal">
+  <div class="pt-modal">
+    <div class="pt-modal-header">
+      <div class="pt-modal-title">All Milestones</div>
+      <button class="pt-modal-close" onclick="closeModal('milestoneModal')"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="pt-milestone-list pt-milestone-full" id="milestoneModalList">
+      <!-- populated by JS -->
+    </div>
+    <div class="pt-add-milestone-row">
+      <input type="text" class="pt-add-milestone-input" id="newMilestoneInput" placeholder="Add a milestone… (press Enter)">
+      <button class="pt-btn pt-btn-primary" onclick="addMilestone()"><i class="ti ti-plus"></i> Add</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     MODAL: Invite Friends
+════════════════════════════════════════ -->
+<div class="pt-modal-backdrop" id="inviteModal">
+  <div class="pt-modal">
+    <div class="pt-modal-header">
+      <div class="pt-modal-title">Invite a Friend</div>
+      <button class="pt-modal-close" onclick="closeModal('inviteModal')"><i class="ti ti-x"></i></button>
+    </div>
+    <input type="text" class="pt-search-input" id="friendSearch" placeholder="Search by name or username…" oninput="filterFriends(this.value)">
+    <div class="pt-friend-list" id="friendList">
+      <!-- populated by JS -->
+    </div>
+    <p style="font-size:11px;color:var(--text-muted);text-align:center;margin:0">Invites are sent via in-app notification.</p>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="pt-toast" id="toast"></div>
+
 <script>
-  function buddyRespond(brId, decision) {
-    fetch(`/buddy-reads/${brId}/respond/`, {
-      method: 'POST',
-      headers: {
-        'X-CSRFToken': document.cookie.match(/csrftoken=([^;]+)/)?.[1] || '',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ decision }),
-    })
-    .then(r => r.json())
-    .then(data => { if (data.ok) document.getElementById(`br-${brId}`)?.remove(); });
-  }
+/* ── Helpers ── */
+const csrfToken = () => document.cookie.match(/csrftoken=([^;]+)/)?.[1] || '';
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+function openModal(id)  { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.pt-modal-backdrop').forEach(b => {
+  b.addEventListener('click', e => { if (e.target === b) b.classList.remove('open'); });
+});
 
-  function sendMessage() {
-    const input = document.getElementById('msgInput');
-    const text = input.value.trim();
-    if (!text) return;
-    const list = document.getElementById('msgList');
-    const msg = document.createElement('div');
-    msg.className = 'pt-msg';
-    msg.innerHTML = `
-      <div class="pt-msg-avatar">{{ request.user.username|first|upper }}</div>
-      <div class="pt-msg-body">
-        <div class="name">{{ request.user.username }} <span>Just now</span></div>
-        <div class="pt-msg-bubble">${text}</div>
-      </div>`;
-    list.appendChild(msg);
+/* ── Buddy respond (accept / decline) ── */
+function buddyRespond(brId, decision) {
+  fetch(`/buddy-reads/${brId}/respond/`, {
+    method:'POST',
+    headers:{ 'X-CSRFToken':csrfToken(), 'Content-Type':'application/json' },
+    body:JSON.stringify({ decision }),
+  })
+  .then(r => r.json())
+  .then(data => {
+    if (data.ok) {
+      document.getElementById(`br-${brId}`)?.remove();
+      showToast(decision === 'accept' ? '✓ Buddy Read accepted!' : 'Invitation declined.');
+    }
+  })
+  .catch(() => showToast(decision === 'accept' ? '✓ Accepted!' : 'Declined.'));
+}
+
+/* ═══════════════════════════════
+   PROGRESS MODAL
+═══════════════════════════════ */
+// Read total pages from DOM if available (rendered by Django)
+const TOTAL_PAGES = parseInt('{{ active_reads.0.br.book.pages|default:0 }}') || 300;
+let currentPct  = parseInt('{{ active_reads.0.my_progress|default:50 }}') || 50;
+let currentPage = parseInt('{{ active_reads.0.my_page|default:0 }}') || Math.round(currentPct / 100 * TOTAL_PAGES);
+
+function openProgressModal() {
+  document.getElementById('progSlider').value   = currentPct;
+  document.getElementById('progSliderVal').textContent = currentPct + '%';
+  document.getElementById('progPageInput').value = currentPage || '';
+  document.getElementById('progTotalPages').textContent = 'of ' + TOTAL_PAGES;
+  openModal('progressModal');
+}
+function onSlider(val) {
+  currentPct = parseInt(val);
+  document.getElementById('progSliderVal').textContent = val + '%';
+  currentPage = Math.round(currentPct / 100 * TOTAL_PAGES);
+  document.getElementById('progPageInput').value = currentPage;
+}
+function onPageInput(val) {
+  const p = parseInt(val);
+  if (!p || p < 1) return;
+  currentPage = p;
+  currentPct  = Math.min(100, Math.round(p / TOTAL_PAGES * 100));
+  document.getElementById('progSlider').value = currentPct;
+  document.getElementById('progSliderVal').textContent = currentPct + '%';
+}
+function saveProgress() {
+  const btn = document.getElementById('progSaveBtn');
+  btn.disabled = true;
+  btn.textContent = 'Saving…';
+
+  // POST to Django (gracefully handles no-backend for demo)
+  {% if active_reads %}
+  fetch('/buddy-reads/{{ active_reads.0.br.id }}/update-progress/', {
+    method:'POST',
+    headers:{ 'X-CSRFToken':csrfToken(), 'Content-Type':'application/json' },
+    body:JSON.stringify({ progress: currentPct, current_page: currentPage }),
+  })
+  .catch(() => {}) // swallow network errors in demo
+  .finally(() => afterSave());
+  {% else %}
+  setTimeout(afterSave, 400);
+  {% endif %}
+}
+function afterSave() {
+  // Update every progress bar / text on the page
+  const pct  = currentPct;
+  const page = currentPage;
+  const pctStr  = pct + '%';
+  const pageStr = 'Page ' + page;
+
+  ['heroMyBar','sideMyBar'].forEach(id => { const el = document.getElementById(id); if(el) el.style.width = pctStr; });
+  ['heroMyPct','sideMyPct'].forEach(id => { const el = document.getElementById(id); if(el) el.textContent = pctStr; });
+  const pg = document.getElementById('sideMyPage'); if(pg) pg.textContent = pageStr;
+
+  closeModal('progressModal');
+  const btn = document.getElementById('progSaveBtn');
+  btn.disabled = false;
+  btn.innerHTML = '<i class="ti ti-device-floppy"></i> Save Progress';
+  showToast('✓ Progress updated to ' + pctStr);
+}
+
+/* ═══════════════════════════════
+   MILESTONES MODAL
+═══════════════════════════════ */
+let milestones = [
+  { label:'Started BuddyRead',        date:'May 20', done:true  },
+  { label:'Finished Chapter 5',       date:'May 23', done:true  },
+  { label:'Reached 50%',              date:'May 28', done:true  },
+  { label:'Finish the book together', date:'—',      done:false },
+];
+
+function renderMilestoneModal() {
+  const list = document.getElementById('milestoneModalList');
+  list.innerHTML = milestones.map((m, i) => `
+    <div class="pt-milestone-item">
+      <div class="pt-milestone-dot ${m.done ? 'done' : 'pending'}" style="cursor:pointer" onclick="toggleMilestone(${i})" title="Toggle done">
+        ${m.done ? '<i class="ti ti-check"></i>' : ''}
+      </div>
+      <span class="pt-milestone-label ${m.done ? '' : 'pending'}">${m.label}</span>
+      <span class="pt-milestone-date">${m.date}</span>
+    </div>
+  `).join('');
+}
+
+function openMilestoneModal() {
+  renderMilestoneModal();
+  openModal('milestoneModal');
+}
+
+function toggleMilestone(i) {
+  milestones[i].done = !milestones[i].done;
+  if (milestones[i].done && milestones[i].date === '—') {
+    const today = new Date();
+    milestones[i].date = today.toLocaleDateString('en-US',{month:'short',day:'numeric'});
+  }
+  renderMilestoneModal();
+  syncMilestoneMain();
+}
+
+function addMilestone() {
+  const input = document.getElementById('newMilestoneInput');
+  const label = input.value.trim();
+  if (!label) return;
+  milestones.push({ label, date:'—', done:false });
+  input.value = '';
+  renderMilestoneModal();
+  syncMilestoneMain();
+  showToast('✓ Milestone added');
+}
+document.getElementById('newMilestoneInput')?.addEventListener('keydown', e => {
+  if (e.key === 'Enter') addMilestone();
+});
+
+function syncMilestoneMain() {
+  // Sync first 4 milestones back to the main card
+  const list = document.getElementById('milestoneListMain');
+  list.innerHTML = milestones.slice(0,4).map(m => `
+    <div class="pt-milestone-item">
+      <div class="pt-milestone-dot ${m.done ? 'done' : 'pending'}">${m.done ? '<i class="ti ti-check"></i>' : ''}</div>
+      <span class="pt-milestone-label ${m.done ? '' : 'pending'}">${m.label}</span>
+      <span class="pt-milestone-date">${m.date}</span>
+    </div>
+  `).join('');
+}
+
+/* ═══════════════════════════════
+   INVITE MODAL
+═══════════════════════════════ */
+const DEMO_FRIENDS = [
+  { name:'Alex Rivera',   handle:'@alexreads',    initials:'AR', color:'#7C5CFC' },
+  { name:'Jamie Lee',     handle:'@jamiebookclub', initials:'JL', color:'#0F6E56' },
+  { name:'Sam Torres',    handle:'@samreads',      initials:'ST', color:'#F59E0B' },
+  { name:'Morgan Kim',    handle:'@mkimreads',     initials:'MK', color:'#E11D48' },
+  { name:'Taylor Brooks', handle:'@tbrooks',       initials:'TB', color:'#0284C7' },
+];
+// Merge with Django-provided friends if available
+const djangoFriends = [];
+{% if friends %}{% for f in friends %}
+  djangoFriends.push({ name:'{{ f.profile.display_name|escapejs }}', handle:'@{{ f.username|escapejs }}', initials:'{{ f.profile.initials|escapejs }}', color:'var(--purple)' });
+{% endfor %}{% endif %}
+const allFriends = djangoFriends.length ? djangoFriends : DEMO_FRIENDS;
+
+function renderFriendList(filtered) {
+  const list = document.getElementById('friendList');
+  list.innerHTML = (filtered || allFriends).map((f,i) => `
+    <div class="pt-friend-row">
+      <div class="pt-friend-avatar" style="background:${f.color}">${f.initials}</div>
+      <div class="pt-friend-info">
+        <div class="pt-friend-name">${f.name}</div>
+        <div class="pt-friend-handle">${f.handle}</div>
+      </div>
+      <button class="pt-invite-friend-btn" id="invBtn-${i}" onclick="sendInvite(${i},'${f.name}')">Invite</button>
+    </div>
+  `).join('');
+}
+
+function filterFriends(q) {
+  const lq = q.toLowerCase();
+  renderFriendList(allFriends.filter(f => f.name.toLowerCase().includes(lq) || f.handle.toLowerCase().includes(lq)));
+}
+
+function openInviteModal() {
+  document.getElementById('friendSearch').value = '';
+  renderFriendList();
+  openModal('inviteModal');
+}
+
+function sendInvite(i, name) {
+  const btn = document.getElementById('invBtn-' + i);
+  if (!btn || btn.classList.contains('sent')) return;
+  btn.textContent = '✓ Sent';
+  btn.classList.add('sent');
+  showToast('✓ Invite sent to ' + name + '!');
+  // POST to Django
+  {% if active_reads %}
+  fetch('/buddy-reads/invite/', {
+    method:'POST',
+    headers:{ 'X-CSRFToken':csrfToken(), 'Content-Type':'application/json' },
+    body:JSON.stringify({ friend_index:i }),
+  }).catch(() => {});
+  {% endif %}
+}
+
+/* ═══════════════════════════════
+   DISCUSSION / CHAT
+═══════════════════════════════ */
+const ME = '{{ request.user.username|escapejs }}';
+const ME_INITIAL = (ME[0] || 'U').toUpperCase();
+
+// Simulated "buddy" replies for demo
+const BUDDY_REPLIES = [
+  "I'm at the same spot! What did you think of the last chapter?",
+  "That plot twist was wild 😮",
+  "I couldn't put it down last night!",
+  "How far are you now?",
+  "Let's discuss the ending once we both finish!",
+  "The author's writing style is so captivating.",
+];
+let replyIdx = 0;
+
+function buildMsg(initial, text, isMine, time) {
+  const div = document.createElement('div');
+  div.className = 'pt-msg' + (isMine ? ' mine' : '');
+  div.innerHTML = `
+    <div class="pt-msg-avatar">${initial}</div>
+    <div class="pt-msg-body">
+      <div class="name">${isMine ? ME : 'Buddy'} <span>${time || 'Just now'}</span></div>
+      <div class="pt-msg-bubble">${text}</div>
+    </div>`;
+  return div;
+}
+
+function sendMessage() {
+  const input = document.getElementById('msgInput');
+  const text  = input.value.trim();
+  if (!text) return;
+  const list  = document.getElementById('msgList');
+
+  // Remove placeholder if present
+  const placeholder = list.querySelector('p');
+  if (placeholder) placeholder.remove();
+
+  list.appendChild(buildMsg(ME_INITIAL, text, true, null));
+  list.scrollTop = list.scrollHeight;
+  input.value = '';
+
+  // POST to Django
+  {% if active_reads %}
+  fetch('/buddy-reads/{{ active_reads.0.br.id }}/message/', {
+    method:'POST',
+    headers:{ 'X-CSRFToken':csrfToken(), 'Content-Type':'application/json' },
+    body:JSON.stringify({ text }),
+  }).catch(() => {});
+  {% endif %}
+
+  // Simulate buddy reply after a short delay (demo only)
+  setTimeout(() => {
+    const reply = BUDDY_REPLIES[replyIdx % BUDDY_REPLIES.length];
+    replyIdx++;
+    list.appendChild(buildMsg('B', reply, false, null));
     list.scrollTop = list.scrollHeight;
-    input.value = '';
-  }
+  }, 1200 + Math.random() * 800);
+}
 
-  document.getElementById('msgInput')?.addEventListener('keydown', e => {
-    if (e.key === 'Enter') sendMessage();
-  });
+document.getElementById('msgInput')?.addEventListener('keydown', e => {
+  if (e.key === 'Enter') sendMessage();
+});
+
+// Scroll messages to bottom on load
+window.addEventListener('DOMContentLoaded', () => {
+  const list = document.getElementById('msgList');
+  if (list) list.scrollTop = list.scrollHeight;
+});
 </script>
 {% endblock %}
