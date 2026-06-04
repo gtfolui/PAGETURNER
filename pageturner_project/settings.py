@@ -17,8 +17,6 @@ if _env_file.exists():
         from dotenv import load_dotenv
         load_dotenv(_env_file)
     except ImportError:
-        # python-dotenv not installed; fall back to a minimal parser so users
-        # can still get going without that dependency.
         for line in _env_file.read_text().splitlines():
             line = line.strip()
             if not line or line.startswith("#") or "=" not in line:
@@ -44,14 +42,12 @@ SECRET_KEY = os.environ.get(
 )
 DEBUG = env_bool("DEBUG", True)
 
-# Comma-separated list, e.g. "myapp.onrender.com,mydomain.com"
 _hosts_env = os.environ.get("ALLOWED_HOSTS", "")
 ALLOWED_HOSTS = [h.strip() for h in _hosts_env.split(",") if h.strip()] or [
     "localhost",
     "127.0.0.1",
     "0.0.0.0",
 ]
-# When deploying to Render/Railway, the hostname is provided via env vars
 RENDER_EXTERNAL_HOSTNAME = os.environ.get("RENDER_EXTERNAL_HOSTNAME")
 if RENDER_EXTERNAL_HOSTNAME:
     ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
@@ -74,10 +70,18 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django.contrib.humanize",
+    "django.contrib.sites",
+    # allauth
+    "allauth",
+    "allauth.account",
+    "allauth.socialaccount",
+    "allauth.socialaccount.providers.google",
     # local
     "accounts",
     "books",
 ]
+
+SITE_ID = 1
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -88,6 +92,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "allauth.account.middleware.AccountMiddleware",
 ]
 
 ROOT_URLCONF = "pageturner_project.urls"
@@ -111,9 +116,14 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "pageturner_project.wsgi.application"
 
+AUTHENTICATION_BACKENDS = [
+    "django.contrib.auth.backends.ModelBackend",
+    "allauth.account.auth_backends.AuthenticationBackend",
+]
+
 
 # ---------------------------------------------------------------------------
-# Database — SQLite by default, DATABASE_URL (Postgres) if set
+# Database
 # ---------------------------------------------------------------------------
 DATABASES = {
     "default": {
@@ -125,13 +135,11 @@ DATABASES = {
 if os.environ.get("DATABASE_URL"):
     try:
         import dj_database_url
-
         DATABASES["default"] = dj_database_url.config(
             conn_max_age=600,
             ssl_require=env_bool("DATABASE_SSL", True),
         )
     except ImportError:
-        # dj-database-url isn't installed locally; that's fine for dev
         pass
 
 
@@ -157,14 +165,17 @@ USE_TZ = True
 
 
 # ---------------------------------------------------------------------------
-# Static files (WhiteNoise serves them in production)
+# Static / Media
 # ---------------------------------------------------------------------------
 STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_DIRS = [BASE_DIR / "static"]
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage" if not DEBUG else "django.contrib.staticfiles.storage.StaticFilesStorage"
+STATICFILES_STORAGE = (
+    "whitenoise.storage.CompressedManifestStaticFilesStorage"
+    if not DEBUG
+    else "django.contrib.staticfiles.storage.StaticFilesStorage"
+)
 
-# User-uploaded files (profile pictures, etc.)
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
@@ -175,6 +186,28 @@ MEDIA_ROOT = BASE_DIR / "media"
 LOGIN_URL = "accounts:login"
 LOGIN_REDIRECT_URL = "books:home"
 LOGOUT_REDIRECT_URL = "accounts:login"
+
+
+# ---------------------------------------------------------------------------
+# django-allauth config
+# ---------------------------------------------------------------------------
+ACCOUNT_EMAIL_VERIFICATION = "none"   # change to "mandatory" when email is set up
+ACCOUNT_LOGIN_METHODS = {"username"}
+ACCOUNT_SIGNUP_FIELDS = ["username*", "email", "password1*", "password2*"]
+SOCIALACCOUNT_AUTO_SIGNUP = True
+SOCIALACCOUNT_LOGIN_ON_GET = True
+
+SOCIALACCOUNT_PROVIDERS = {
+    "google": {
+        "SCOPE": ["profile", "email"],
+        "AUTH_PARAMS": {"access_type": "online"},
+        "APP": {
+            "client_id": os.environ.get("GOOGLE_CLIENT_ID", ""),
+            "secret": os.environ.get("GOOGLE_CLIENT_SECRET", ""),
+            "key": "",
+        },
+    }
+}
 
 
 # ---------------------------------------------------------------------------
@@ -194,7 +227,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 
 # ---------------------------------------------------------------------------
-# Email (uses console backend in dev so verification links print to terminal)
+# Email
 # ---------------------------------------------------------------------------
 EMAIL_BACKEND = os.environ.get(
     "EMAIL_BACKEND",
@@ -211,21 +244,11 @@ DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL", "PageTurner <noreply@p
 # ---------------------------------------------------------------------------
 # PageTurner feature flags
 # ---------------------------------------------------------------------------
-# When True, new accounts can't send friend requests, post reviews, or write
-# activity until they've clicked their email-verification link.
 REQUIRE_EMAIL_VERIFICATION = env_bool("REQUIRE_EMAIL_VERIFICATION", False)
-
-# Maximum friend requests one user can send per hour (anti-spam).
 FRIEND_REQUEST_RATE_LIMIT_PER_HOUR = int(os.environ.get("FRIEND_REQUEST_RATE_LIMIT_PER_HOUR", "20"))
-
-# Google Books API key (optional — the public endpoint works without it but is
-# rate-limited more aggressively).
 GOOGLE_BOOKS_API_KEY = os.environ.get("GOOGLE_BOOKS_API_KEY", "")
-
-# Words filtered from reviews. Extend this list or load from a file in prod.
 PROFANITY_BLOCKLIST = [
     w.strip().lower()
     for w in os.environ.get("PROFANITY_BLOCKLIST", "").split(",")
     if w.strip()
 ]
-
