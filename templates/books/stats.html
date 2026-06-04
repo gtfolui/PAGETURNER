@@ -4,50 +4,427 @@
 {% block title %}Statistics · PageTurner{% endblock %}
 
 {% block content %}
-<div class="page-title">Reading Statistics</div>
-<div class="page-sub">Your reading journey at a glance.</div>
 
-<div class="stats-grid">
-  <div class="stat-card">
-    <div class="stat-val">{{ total_books }}</div>
-    <div class="stat-label">Total books read</div>
-  </div>
-  <div class="stat-card">
-    <div class="stat-val">{{ total_pages|intcomma }}</div>
-    <div class="stat-label">Pages read</div>
-  </div>
-  <div class="stat-card">
-    <div class="stat-val">{{ avg_rating }} <i class="ti ti-star-filled" style="font-size:20px;color:var(--pt-gold)"></i></div>
-    <div class="stat-label">Avg rating given</div>
-  </div>
-  <div class="stat-card">
-    <div class="stat-val">{{ reviews_written }}</div>
-    <div class="stat-label">Reviews written</div>
-  </div>
-</div>
+<style>
+/* =========================
+   PAGE STYLING
+========================= */
 
-<div class="challenge-card">
-  <div class="section-title" style="margin-bottom:16px">Top genres</div>
-  {% for g in top_genres %}
-    <div class="genre-bar">
-      <div class="genre-header"><span class="genre-name">{{ g.name }}</span><span class="genre-count">{{ g.count }} book{{ g.count|pluralize }}</span></div>
-      <div class="genre-track"><div class="genre-fill" style="width:{{ g.pct }}%;background:{{ g.color }}"></div></div>
+.stats-dashboard{
+    padding:32px;
+    background:#f4f7fc;
+    min-height:100vh;
+}
+
+.stats-header{
+    margin-bottom:30px;
+}
+
+.stats-title{
+    font-size:32px;
+    font-weight:700;
+    color:#1f2937;
+    margin-bottom:6px;
+}
+
+.stats-subtitle{
+    color:#94a3b8;
+    font-size:15px;
+}
+
+/* =========================
+   CLEAN HOMEPAGE-STYLE DASH CARDS (FIXED SIZE)
+========================= */
+
+.stats-dashboard{
+    padding:32px;
+    background:#fcfbfe;
+    min-height:100vh;
+}
+
+/* GRID - SMALLER, TIGHTER */
+.stats-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:16px;
+    margin-bottom:24px;
+}
+
+/* CARD - SMALLER HEIGHT */
+.stat-card{
+    position:relative;
+    overflow:hidden;
+
+    border-radius:20px;
+    padding:18px;
+
+    min-height:140px; /* 🔥 reduced */
+    color:#1f1135;
+
+    background:#f5f0fa;
+    border:1px solid #ebdff5;
+
+    box-shadow:0 6px 18px rgba(99,35,166,0.06);
+
+    transition:all .25s ease;
+}
+
+.stat-card:hover{
+    transform:translateY(-3px);
+    box-shadow:0 12px 28px rgba(99,35,166,0.12);
+    background:#ffffff;
+}
+
+/* REMOVE BIG GLASS ORBS */
+.stat-card::before{
+    display:none;
+}
+
+/* ICON AREA (SMALLER) */
+.stat-icon{
+    width:42px;
+    height:42px;
+    border-radius:12px;
+
+    background:#ffffff;
+    border:1px solid #ebdff5;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    color:#6323a6;
+    font-size:18px;
+}
+
+/* BADGE (SMALLER) */
+.stat-badge{
+    width:36px;
+    height:36px;
+
+    background:#6323a6;
+    color:#ffffff;
+
+    border-radius:12px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    font-weight:800;
+    font-size:13px;
+}
+
+/* LABEL */
+.stat-label{
+    font-size:12px;
+    color:#796a91;
+    margin-top:10px;
+}
+
+/* MAIN VALUE (REDUCED DRAMATICALLY) */
+.stat-val{
+    font-size:22px;
+    font-weight:800;
+    color:#1f1135;
+    margin-top:4px;
+}
+
+/* PROGRESS BAR (MORE MINIMAL) */
+.stat-progress{
+    margin-top:12px;
+    width:100%;
+    height:6px;
+    border-radius:999px;
+    background:#e9e2f0;
+    overflow:hidden;
+}
+
+.stat-progress-fill{
+    height:100%;
+    background:#6323a6;
+    border-radius:999px;
+}
+
+/* HEADER ROW */
+.stat-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:8px;
+}
+
+/* RESPONSIVE */
+@media (max-width: 900px){
+    .stats-dashboard{
+        padding:20px;
+    }
+
+    .stats-grid{
+        grid-template-columns:1fr;
+    }
+}
+
+/* =========================
+   MAIN GRID
+========================= */
+
+.analytics-grid{
+    display:grid;
+    grid-template-columns:2fr 1fr;
+    gap:24px;
+}
+
+.panel{
+    background:white;
+    border-radius:24px;
+    padding:28px;
+    box-shadow:0 10px 30px rgba(15,23,42,.06);
+}
+
+.section-title{
+    font-size:20px;
+    font-weight:700;
+    color:#111827;
+    margin-bottom:22px;
+}
+
+/* =========================
+   GENRE SECTION
+========================= */
+
+.genre-bar{
+    margin-bottom:20px;
+}
+
+.genre-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:8px;
+}
+
+.genre-name{
+    font-weight:600;
+    color:#334155;
+}
+
+.genre-count{
+    font-size:13px;
+    color:#94a3b8;
+}
+
+.genre-track{
+    width:100%;
+    height:12px;
+    background:#edf2f7;
+    border-radius:999px;
+    overflow:hidden;
+}
+
+.genre-fill{
+    height:100%;
+    border-radius:999px;
+    transition:width .5s ease;
+}
+
+/* =========================
+   YEAR CHART
+========================= */
+
+.year-chart{
+    display:flex;
+    align-items:flex-end;
+    gap:12px;
+    height:280px;
+}
+
+.year-column{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:flex-end;
+    height:100%;
+}
+
+.year-count{
+    font-size:12px;
+    color:#64748b;
+    margin-bottom:8px;
+    font-weight:600;
+}
+
+.year-bar{
+    width:100%;
+    background:linear-gradient(
+        180deg,
+        #6366f1 0%,
+        #4338ca 100%
+    );
+    border-radius:12px 12px 0 0;
+    min-height:10px;
+    transition:all .4s ease;
+}
+
+.year-bar:hover{
+    opacity:.85;
+}
+
+.year-label{
+    margin-top:10px;
+    font-size:12px;
+    color:#64748b;
+}
+
+/* =========================
+   EMPTY STATE
+========================= */
+
+.empty-state{
+    color:#94a3b8;
+    font-size:14px;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 900px){
+
+    .analytics-grid{
+        grid-template-columns:1fr;
+    }
+
+    .stats-dashboard{
+        padding:20px;
+    }
+
+    .stats-title{
+        font-size:26px;
+    }
+}
+</style>
+
+<div class="stats-dashboard">
+
+    <div class="stats-header">
+        <div class="stats-title">
+            Reading Statistics
+        </div>
+
+        <div class="stats-subtitle">
+            Welcome back. Here's a snapshot of your reading activity.
+        </div>
     </div>
-  {% empty %}
-    <p style="color:var(--color-text-secondary);font-size:13px">No data yet. Read some books to see your genre breakdown.</p>
-  {% endfor %}
-</div>
 
-<div class="challenge-card" style="margin-top:14px">
-  <div class="section-title" style="margin-bottom:16px">Books read by year</div>
-  <div style="display:flex;align-items:flex-end;gap:10px;height:120px">
-    {% for y in year_data %}
-      <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;height:100%;justify-content:flex-end">
-        <div style="font-size:11px;color:var(--color-text-secondary)">{{ y.count }}</div>
-        <div style="width:100%;background:var(--pt-gold);border-radius:3px 3px 0 0;height:{{ y.height_pct }}%;min-height:2px;transition:height .4s"></div>
-        <div style="font-size:11px;color:var(--color-text-secondary)">{{ y.year }}</div>
-      </div>
-    {% endfor %}
-  </div>
+    <!-- TOP CARDS -->
+    <!-- TOP CARDS -->
+<div class="stats-grid">
+
+    <div class="stat-card books-card">
+
+        <div class="stat-top">
+            <div class="stat-icon">
+                <i class="ti ti-book"></i>
+            </div>
+
+            <div class="stat-badge">
+                {{ total_books }}
+            </div>
+        </div>
+
+        <div class="stat-label">
+            Total Books Read
+        </div>
+
+        <div class="stat-val">
+            {{ total_books }}
+        </div>
+
+        <div class="stat-progress">
+            <div class="stat-progress-fill" style="width:85%;"></div>
+        </div>
+
+    </div>
+
+    <div class="stat-card pages-card">
+
+        <div class="stat-top">
+            <div class="stat-icon">
+                <i class="ti ti-file-text"></i>
+            </div>
+
+            <div class="stat-badge">
+                {{ total_pages|intcomma }}
+            </div>
+        </div>
+
+        <div class="stat-label">
+            Pages Read
+        </div>
+
+        <div class="stat-val">
+            {{ total_pages|intcomma }}
+        </div>
+
+        <div class="stat-progress">
+            <div class="stat-progress-fill" style="width:72%;"></div>
+        </div>
+
+    </div>
+
+    <div class="stat-card rating-card">
+
+        <div class="stat-top">
+            <div class="stat-icon">
+                <i class="ti ti-star-filled"></i>
+            </div>
+
+            <div class="stat-badge">
+                {{ avg_rating }}
+            </div>
+        </div>
+
+        <div class="stat-label">
+            Average Rating
+        </div>
+
+        <div class="stat-val">
+            {{ avg_rating }}
+        </div>
+
+        <div class="stat-progress">
+            <div class="stat-progress-fill" style="width:92%;"></div>
+        </div>
+
+    </div>
+
+    <div class="stat-card review-card">
+
+        <div class="stat-top">
+            <div class="stat-icon">
+                <i class="ti ti-message-circle"></i>
+            </div>
+
+            <div class="stat-badge">
+                {{ reviews_written }}
+            </div>
+        </div>
+
+        <div class="stat-label">
+            Reviews Written
+        </div>
+
+        <div class="stat-val">
+            {{ reviews_written }}
+        </div>
+
+        <div class="stat-progress">
+            <div class="stat-progress-fill" style="width:68%;"></div>
+        </div>
+
+    </div>
+
 </div>
 {% endblock %}

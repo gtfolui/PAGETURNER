@@ -4,50 +4,328 @@
 {% block title %}Reading Challenge · PageTurner{% endblock %}
 
 {% block content %}
+
+<style>
+/* =========================
+   BASE (MATCH HOME STYLE)
+========================= */
+
+body{
+    background-color: #fcfbfe;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: #2d213d;
+}
+
+.page-title{
+    font-size: 22px;
+    font-weight: 800;
+    color: #1f1135;
+    margin-bottom: 6px;
+}
+
+.page-sub{
+    font-size: 14px;
+    color: #796a91;
+    margin-bottom: 18px;
+}
+
+/* =========================
+   CARD
+========================= */
+
+.challenge-card{
+    background-color: #f5f0fa;
+    border: 1px solid #ebdff5;
+    border-radius: 24px;
+    padding: 24px;
+    box-shadow: 0 8px 24px rgba(99, 35, 166, 0.02);
+}
+
+/* HEADER */
+.challenge-header{
+    display:flex;
+    justify-content: space-between;
+    align-items:center;
+    margin-bottom: 18px;
+}
+
+.challenge-title{
+    font-size: 16px;
+    font-weight: 800;
+    color: #1f1135;
+}
+
+.challenge-year{
+    font-size: 12px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background-color: #6323a6;
+    color: #ffffff;
+    font-weight: 700;
+}
+
+/* =========================
+   RING
+========================= */
+
+.challenge-ring{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    position:relative;
+    margin: 10px 0 18px;
+}
+
+.ring-svg{
+    transform: rotate(-90deg);
+}
+
+.ring-track{
+    fill:none;
+    stroke: #ebdff5;
+    stroke-width: 10;
+}
+
+.ring-fill{
+    fill:none;
+    stroke: #6323a6;
+    stroke-width: 10;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 0.4s ease;
+}
+
+/* TEXT */
+.ring-text{
+    position:absolute;
+    text-align:center;
+}
+
+.ring-num{
+    font-size: 20px;
+    font-weight: 800;
+    color:#1f1135;
+    display:block;
+}
+
+.ring-total{
+    font-size: 12px;
+    color: #796a91;
+}
+
+/* =========================
+   STATS
+========================= */
+
+.challenge-stats{
+    display:flex;
+    justify-content: space-between;
+    margin-top: 14px;
+}
+
+.ch-stat-val{
+    font-size: 18px;
+    font-weight: 800;
+    color:#1f1135;
+}
+
+.ch-stat-label{
+    font-size: 12px;
+    color: #796a91;
+}
+
+/* =========================
+   SLIDER (VISIBLE + WORKING)
+========================= */
+
+.slider-wrap{
+    margin-top: 18px;
+    padding-top: 18px;
+    border-top: 1px solid #e9e2f0;
+}
+
+input[type="range"]{
+    width: 100%;
+    height: 6px;
+    border-radius: 10px;
+    background: #e9e2f0;
+    outline: none;
+    accent-color: #6323a6;
+}
+
+/* thumb */
+input[type="range"]::-webkit-slider-thumb{
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #6323a6;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(99, 35, 166, 0.25);
+}
+
+/* =========================
+   BOOK GRID
+========================= */
+
+.book-grid{
+    display:grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 20px;
+}
+
+.book-grid > *{
+    border-radius: 20px;
+    overflow: hidden;
+    background-color: #ffffff;
+    border: 1px solid #e9e2f0;
+    transition: all 0.25s ease;
+    box-shadow: 0 6px 18px rgba(99, 35, 166, 0.05);
+}
+
+.book-grid > *:hover{
+    transform: translateY(-3px);
+    box-shadow: 0 12px 28px rgba(99, 35, 166, 0.12);
+}
+
+/* SECTION TITLE */
+.section-title{
+    font-size: 18px;
+    font-weight: 800;
+    color: #1f1135;
+    margin-top: 28px;
+    margin-bottom: 14px;
+}
+</style>
+
+<!-- PAGE HEADER -->
 <div class="page-title">Reading Challenge</div>
-<div class="page-sub">Set your goal for {{ challenge.year }} and track your progress.</div>
+<div class="page-sub">
+    Set your goal for {{ challenge.year }} and track your progress.
+</div>
 
+<!-- CARD -->
 <div class="challenge-card">
-  <div class="challenge-header">
-    <div class="challenge-title">{{ challenge.year }} Reading Challenge</div>
-    <div class="challenge-year">{{ challenge.year }}</div>
-  </div>
-  <div class="challenge-ring">
-    <svg class="ring-svg" width="110" height="110" viewBox="0 0 100 100">
-      <circle class="ring-track" cx="50" cy="50" r="42"/>
-      {% widthratio challenge_pct 100 263.9 as offset %}
-      <circle class="ring-fill" id="challengeRing" cx="50" cy="50" r="42"
-              stroke-dasharray="263.9"
-              style="stroke-dashoffset:{{ offset }}px"/>
-    </svg>
-    <div class="ring-text">
-      <span class="ring-num" id="chRead">{{ challenge_read }}</span>
-      <span class="ring-total" id="chGoal">of {{ challenge.goal }}</span>
+
+    <div class="challenge-header">
+        <div class="challenge-title">{{ challenge.year }} Reading Challenge</div>
+        <div class="challenge-year">{{ challenge.year }}</div>
     </div>
-  </div>
-  <div class="challenge-stats">
-    <div><div class="ch-stat-val" id="chPct">{{ challenge_pct }}%</div><div class="ch-stat-label">complete</div></div>
-    <div><div class="ch-stat-val" id="chLeft">{{ challenge_left }}</div><div class="ch-stat-label">books left</div></div>
-    <div><div class="ch-stat-val" id="chPages">{{ challenge_pages|intcomma }}</div><div class="ch-stat-label">pages read</div></div>
-  </div>
-  <div style="margin-top:18px;padding-top:18px;border-top:1px solid var(--color-border-tertiary)">
-    <div style="font-size:13px;font-weight:500;margin-bottom:10px">Adjust your goal</div>
-    <div style="display:flex;align-items:center;gap:14px">
-      <input type="range" min="1" max="100" value="{{ challenge.goal }}" step="1" id="goalSlider"
-             oninput="updateGoal(this.value)" style="flex:1">
-      <span style="font-size:14px;font-weight:500;min-width:60px" id="goalDisplay">{{ challenge.goal }} books</span>
+
+    <!-- RING -->
+    <div class="challenge-ring">
+        <svg class="ring-svg" width="110" height="110" viewBox="0 0 100 100">
+            <circle class="ring-track" cx="50" cy="50" r="42"></circle>
+
+            {% widthratio challenge_pct 100 263.9 as offset %}
+            <circle class="ring-fill"
+                    id="challengeRing"
+                    cx="50" cy="50" r="42"
+                    stroke-dasharray="263.9"
+                    stroke-dashoffset="{{ offset }}">
+            </circle>
+        </svg>
+
+        <div class="ring-text">
+            <span class="ring-num" id="chRead">{{ challenge_read }}</span>
+            <span class="ring-total">
+                of <span id="goalValue">{{ challenge.goal }}</span>
+            </span>
+        </div>
     </div>
-  </div>
+
+    <!-- STATS -->
+    <div class="challenge-stats">
+        <div>
+            <div class="ch-stat-val" id="chPct">{{ challenge_pct }}%</div>
+            <div class="ch-stat-label">complete</div>
+        </div>
+
+        <div>
+            <div class="ch-stat-val" id="chLeft">{{ challenge_left }}</div>
+            <div class="ch-stat-label">books left</div>
+        </div>
+
+        <div>
+            <div class="ch-stat-val" id="chPages">{{ challenge_pages|intcomma }}</div>
+            <div class="ch-stat-label">pages read</div>
+        </div>
+    </div>
+
+    <!-- SLIDER -->
+    <div class="slider-wrap">
+
+        <div style="font-size:13px;font-weight:700;margin-bottom:10px;color:#1f1135;">
+            Adjust your goal
+        </div>
+
+        <input type="range"
+               id="goalSlider"
+               min="1"
+               max="100"
+               step="1"
+               value="{{ challenge.goal }}"
+               oninput="updateGoal(this.value)">
+
+        <div style="margin-top:8px;font-size:14px;font-weight:700;color:#1f1135;">
+            <span id="goalDisplay">{{ challenge.goal }} books</span>
+        </div>
+
+    </div>
+
 </div>
 
-<div class="section-head" style="margin-top:24px">
-  <span class="section-title">Books read this year</span>
-</div>
+<!-- BOOKS -->
+<div class="section-title">Books read this year</div>
+
 <div class="book-grid">
-  {% for ub in year_books %}
-    {% with book=ub.book %}{% include "books/_book_card.html" %}{% endwith %}
-  {% empty %}
-    <p style="color:var(--color-text-secondary);font-size:13px;grid-column:1/-1">No books read this year yet. Move some books to your "Read" shelf to see them here.</p>
-  {% endfor %}
+    {% for ub in year_books %}
+        {% with book=ub.book %}
+            {% include "books/_book_card.html" %}
+        {% endwith %}
+    {% empty %}
+        <div style="color:#796a91;font-size:14px;text-align:center;padding:32px;">
+            No books read this year yet.
+        </div>
+    {% endfor %}
 </div>
+
+<!-- =========================
+     JS: FULL SYNC FIX
+========================= -->
+
+<script>
+const R = 263.9;
+
+function updateGoal(value){
+
+    value = parseInt(value);
+
+    // update UI text
+    document.getElementById("goalDisplay").innerText = value + " books";
+    document.getElementById("goalValue").innerText = value;
+
+    let read = parseInt(document.getElementById("chRead").innerText || 0);
+    let goal = value > 0 ? value : 1;
+
+    let pct = Math.min(100, Math.round((read / goal) * 100));
+    let left = goal - read;
+
+    // update stats
+    document.getElementById("chPct").innerText = pct + "%";
+    document.getElementById("chLeft").innerText = left > 0 ? left : 0;
+
+    // update ring (CRITICAL FIX)
+    const ring = document.getElementById("challengeRing");
+    let offset = R - (pct / 100) * R;
+
+    ring.style.strokeDasharray = R;
+    ring.style.strokeDashoffset = offset;
+}
+
+// init on load (IMPORTANT)
+document.addEventListener("DOMContentLoaded", function(){
+    updateGoal(document.getElementById("goalSlider").value);
+});
+</script>
+
 {% endblock %}

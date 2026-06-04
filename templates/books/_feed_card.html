@@ -1,26 +1,195 @@
 {# Renders an Activity in feed format. Variables: activity #}
+
+<style>
+.feed-card{
+    background:#f5f0fa;
+    border:1px solid #ebdff5;
+    border-radius:20px;
+    padding:14px 16px;
+
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+
+    transition:all .25s ease;
+}
+
+.feed-card:hover{
+    background:#ffffff;
+    transform:translateY(-2px);
+    box-shadow:0 10px 25px rgba(99,35,166,0.08);
+}
+
+/* HEADER */
+.feed-header{
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+/* AVATAR */
+.user-avatar{
+    width:44px;
+    height:44px;
+    border-radius:14px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    font-size:12px;
+    font-weight:800;
+    color:#fff;
+
+    box-shadow:0 6px 14px rgba(0,0,0,0.12);
+}
+
+/* META */
+.feed-user{
+    font-size:14px;
+    font-weight:800;
+    color:#1f1135;
+}
+
+.feed-time{
+    font-size:12px;
+    color:#796a91;
+}
+
+/* ACTION TEXT */
+.feed-action{
+    font-size:13px;
+    color:#4f3b6c;
+    line-height:1.4;
+}
+
+/* BOOK SECTION */
+.feed-book{
+    display:flex;
+    gap:12px;
+    align-items:center;
+
+    padding:10px;
+    border-radius:14px;
+    background:#ffffff;
+    border:1px solid #ebdff5;
+
+    cursor:pointer;
+    transition:.2s;
+}
+
+.feed-book:hover{
+    transform:translateY(-2px);
+    box-shadow:0 8px 18px rgba(99,35,166,0.08);
+}
+
+/* COVER */
+.feed-cover{
+    width:46px;
+    height:64px;
+    border-radius:10px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    font-size:9px;
+    font-weight:800;
+    text-align:center;
+
+    overflow:hidden;
+}
+
+/* BOOK INFO */
+.feed-book-title{
+    font-size:14px;
+    font-weight:800;
+    color:#1f1135;
+}
+
+.feed-book-author{
+    font-size:12px;
+    color:#796a91;
+}
+
+/* REVIEW */
+.feed-review{
+    font-size:13px;
+    color:#4f3b6c;
+    font-style:italic;
+
+    padding:10px;
+    border-left:3px solid #6323a6;
+    background:#ffffff;
+    border-radius:10px;
+}
+
+/* ACTION BUTTONS */
+.feed-actions{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+}
+
+.feed-btn{
+    display:flex;
+    align-items:center;
+    gap:6px;
+
+    background:#ffffff;
+    border:1px solid #ebdff5;
+    border-radius:12px;
+
+    padding:8px 10px;
+    font-size:12px;
+    font-weight:700;
+    color:#6323a6;
+
+    cursor:pointer;
+    transition:.2s;
+}
+
+.feed-btn:hover{
+    transform:translateY(-2px);
+    box-shadow:0 8px 18px rgba(99,35,166,0.1);
+}
+</style>
+
 <div class="feed-card">
+
   <div class="feed-header">
-    <div class="user-avatar" style="background:linear-gradient(135deg,{{ activity.user.profile.avatar_color_a|default:'#C4922A' }},{{ activity.user.profile.avatar_color_b|default:'#8B3E2A' }})">
+    <div class="user-avatar"
+         style="background:linear-gradient(135deg,{{ activity.user.profile.avatar_color_a|default:'#C4922A' }},{{ activity.user.profile.avatar_color_b|default:'#8B3E2A' }})">
       {{ activity.user.profile.initials|default:'U' }}
     </div>
-    <div class="feed-meta">
-      <div class="feed-user">{{ activity.user.profile.display_name|default:activity.user.username }}</div>
-      <div class="feed-time">{{ activity.created_at|timesince }} ago</div>
+
+    <div>
+      <div class="feed-user">
+        {{ activity.user.profile.display_name|default:activity.user.username }}
+      </div>
+      <div class="feed-time">
+        {{ activity.created_at|timesince }} ago
+      </div>
     </div>
   </div>
+
   <div class="feed-action">
     <strong>{{ activity.user.profile.display_name|default:activity.user.username }}</strong>
     {{ activity.get_action_display }}
     <strong>{{ activity.book.title }}</strong>
   </div>
+
   <div class="feed-book" onclick="openBook({{ activity.book.id }})">
-    <div class="feed-cover" style="background:{{ activity.book.cover_bg }};color:{{ activity.book.cover_color }}">{{ activity.book.title }}</div>
-    <div class="feed-book-info">
+    <div class="feed-cover"
+         style="background:{{ activity.book.cover_bg }};color:{{ activity.book.cover_color }}">
+      {{ activity.book.title }}
+    </div>
+
+    <div>
       <div class="feed-book-title">{{ activity.book.title }}</div>
       <div class="feed-book-author">{{ activity.book.author }}</div>
+
       {% if activity.stars %}
-        <div style="display:flex;gap:2px">
+        <div style="display:flex;gap:2px;margin-top:4px">
           {% for i in "12345" %}
             {% if forloop.counter <= activity.stars %}
               <i class="ti ti-star-filled star-icon"></i>
@@ -32,12 +201,25 @@
       {% endif %}
     </div>
   </div>
+
   {% if activity.review %}
-    <div class="feed-review">"{{ activity.review }}"</div>
+    <div class="feed-review">
+      "{{ activity.review }}"
+    </div>
   {% endif %}
+
   <div class="feed-actions">
-    <button class="feed-btn" onclick="likePost(this)"><i class="ti ti-heart"></i><span>Like</span></button>
-    <button class="feed-btn"><i class="ti ti-message-circle"></i><span>Comment</span></button>
-    <button class="feed-btn" onclick="openBook({{ activity.book.id }})"><i class="ti ti-plus"></i><span>Add to shelf</span></button>
+    <button class="feed-btn" onclick="likePost(this)">
+      <i class="ti ti-heart"></i><span>Like</span>
+    </button>
+
+    <button class="feed-btn">
+      <i class="ti ti-message-circle"></i><span>Comment</span>
+    </button>
+
+    <button class="feed-btn" onclick="openBook({{ activity.book.id }})">
+      <i class="ti ti-plus"></i><span>Add to shelf</span>
+    </button>
   </div>
+
 </div>

@@ -3,18 +3,115 @@
 {% block title %}Activity · PageTurner{% endblock %}
 
 {% block content %}
+
+<style>
+/* =========================
+   BASE (MATCH HOMEPAGE)
+========================= */
+
+body{
+    background-color:#b7adcb;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    color:#2d213d;
+}
+
+.page-title{
+    font-size:22px;
+    font-weight:800;
+    color:#1f1135;
+    margin-bottom:6px;
+}
+
+.page-sub{
+    font-size:14px;
+    color:#796a91;
+    margin-bottom:18px;
+}
+
+/* =========================
+   FEED WRAPPER
+========================= */
+
+.feed{
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+}
+
+/* =========================
+   FEED CARD (HOME STYLE SYSTEM)
+========================= */
+
+.feed > *{
+    background:#f5f0fa;
+    border:1px solid #ebdff5;
+    border-radius:20px;
+
+    padding:14px 16px;
+
+    transition:all .25s ease;
+}
+
+.feed > *:hover{
+    background:#ffffff;
+    transform:translateY(-2px);
+    box-shadow:0 10px 25px rgba(99,35,166,0.08);
+}
+
+/* =========================
+   EMPTY STATE (HOME STYLE)
+========================= */
+
+.empty-state{
+    text-align:center;
+    padding:40px;
+    background:#f5f0fa;
+    border:1px solid #ebdff5;
+    border-radius:20px;
+    color:#796a91;
+}
+
+.empty-state h3{
+    color:#1f1135;
+    margin-top:10px;
+}
+
+/* LINK STYLE (HOME ACCENT GREEN/PURPLE MIX) */
+.empty-state a{
+    color:#6323a6;
+    font-weight:800;
+    text-decoration:none;
+}
+
+.empty-state a:hover{
+    text-decoration:underline;
+}
+</style>
+
+<!-- PAGE HEADER -->
 <div class="page-title">Activity Feed</div>
 <div class="page-sub">See what your friends are reading.</div>
 
+<!-- FEED -->
 <div class="feed">
+
   {% for activity in activities %}
-    {% include "books/_feed_card.html" %}
+      {% include "books/_feed_card.html" %}
   {% empty %}
-    <div class="empty-state">
-      <i class="ti ti-rss"></i>
-      <h3>No activity yet</h3>
-      <p><a href="{% url 'books:friends' %}" style="color:var(--pt-gold)">Follow some readers</a> to start seeing their activity here.</p>
-    </div>
+
+      <div class="empty-state">
+          <i class="ti ti-rss"></i>
+          <h3>No activity yet</h3>
+          <p>
+              <a href="{% url 'books:friends' %}">
+                  Follow some readers
+              </a>
+              to start seeing their activity here.
+          </p>
+      </div>
+
   {% endfor %}
+
 </div>
+
 {% endblock %}
