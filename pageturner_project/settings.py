@@ -44,7 +44,7 @@ DEBUG = env_bool("DEBUG", True)
 
 # Updated ALLOWED_HOSTS for PythonAnywhere deployment
 ALLOWED_HOSTS = [
-    'psusphere.pythonanywhere.com', 
+    'gtfolui.pythonanywhere.com', 
     '127.0.0.1', 
     'localhost', 
     '0.0.0.0'
