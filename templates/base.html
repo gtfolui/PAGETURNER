@@ -366,8 +366,87 @@
 
     <!-- Modals and Overlays remain fully operational here -->
     <div class="modal-overlay" id="bookModal" onclick="closeModal(event)" style="display:none">
-      <!-- (Keep existing code body for bookModal untouched) -->
+  <div class="modal modal-wide">
+    <div class="modal-head">
+      <span class="modal-title" id="modalTitle"></span>
+      <button onclick="closeModal()" style="background:none;border:none;cursor:pointer;font-size:22px;color:#888;">&times;</button>
     </div>
+    <div class="modal-body">
+      <div class="bk-hero">
+        <div class="bk-cover-wrap">
+          <div class="modal-cover" id="modalCover"></div>
+          <div class="bk-cover-actions">
+            <button class="bk-want-btn" id="modalQuickWant" onclick="quickShelf('want')">
+              <i class="ti ti-bookmark"></i><span>Want to Read</span>
+            </button>
+          </div>
+        </div>
+        <div class="bk-meta">
+          <div class="bk-title" id="modalBookTitle"></div>
+          <div class="bk-author" id="modalBookAuthor"></div>
+          <div class="bk-rating-row">
+            <div class="bk-stars" id="modalStars"></div>
+            <span class="bk-rating-num" id="modalRatingNum"></span>
+            <span class="bk-rating-meta" id="modalRatingMeta"></span>
+          </div>
+          <div class="bk-genres" id="modalGenres"></div>
+          <div class="bk-desc-wrap">
+            <div class="bk-desc" id="modalDesc"></div>
+            <button class="bk-show-more" id="modalShowMore" onclick="toggleDesc()" style="display:none">Show more <i class="ti ti-chevron-down"></i></button>
+          </div>
+          <div class="bk-stats" id="modalShelfStats"></div>
+        </div>
+      </div>
+
+      <!-- My Review -->
+      <div class="bk-section bk-my-review">
+        <div class="bk-section-head">My Review</div>
+        <div class="shelf-select">
+          <span class="shelf-badge" data-shelf="Reading">Reading</span>
+          <span class="shelf-badge" data-shelf="Read">Read</span>
+          <span class="shelf-badge" data-shelf="Want to Read">Want to Read</span>
+          <span class="shelf-badge" data-shelf="Favorites">Favorites</span>
+        </div>
+        <div class="star-rating" id="modalStarRating"></div>
+        <div class="review-form">
+          <div class="field-label">Review</div>
+          <textarea id="reviewText" placeholder="Write your thoughts..." rows="3"></textarea>
+        </div>
+        <div style="margin-top:12px;display:flex;gap:10px;">
+          <button class="btn-primary" onclick="saveBook()"><i class="ti ti-device-floppy"></i> Save</button>
+          <button class="btn-secondary" onclick="closeModal()">Cancel</button>
+        </div>
+      </div>
+
+      <!-- About the Author -->
+      <div class="bk-section" id="modalAuthorSection" style="display:none">
+        <div class="bk-section-head">About the Author</div>
+        <div class="bk-author-card">
+          <div class="bk-author-avatar" id="modalAuthorAvatar"></div>
+          <div>
+            <div class="bk-author-name" id="modalAuthorName"></div>
+            <div class="bk-author-stat" id="modalAuthorStat"></div>
+          </div>
+        </div>
+        <div class="bk-author-books" id="modalAuthorBooks"></div>
+      </div>
+
+      <!-- Community Reviews -->
+      <div class="bk-section">
+        <div class="bk-section-head">Community Reviews</div>
+        <div class="bk-breakdown">
+          <div class="bk-bd-summary">
+            <div class="bk-bd-avg" id="modalBdAvg"></div>
+            <div class="bk-stars" id="modalBdStars"></div>
+            <div class="bk-bd-count" id="modalBdCount"></div>
+          </div>
+          <div class="bk-bd-bars" id="modalBdBars"></div>
+        </div>
+        <div class="bk-reviews-list" id="modalReviewsList"></div>
+      </div>
+    </div>
+  </div>
+</div>
     <div class="toast" id="toast"><i class="ti ti-check"></i><span id="toastMsg"></span></div>
     <div class="modal-overlay" id="authorModal" onclick="closeAuthorModal(event)" style="display:none">
       <!-- (Keep existing code body for authorModal untouched) -->
