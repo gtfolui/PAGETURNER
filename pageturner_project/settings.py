@@ -42,11 +42,12 @@ SECRET_KEY = os.environ.get(
 )
 DEBUG = env_bool("DEBUG", True)
 
-_hosts_env = os.environ.get("ALLOWED_HOSTS", "")
-ALLOWED_HOSTS = [h.strip() for h in _hosts_env.split(",") if h.strip()] or [
-    "localhost",
-    "127.0.0.1",
-    "0.0.0.0",
+# Updated ALLOWED_HOSTS for PythonAnywhere deployment
+ALLOWED_HOSTS = [
+    'psusphere.pythonanywhere.com', 
+    '127.0.0.1', 
+    'localhost', 
+    '0.0.0.0'
 ]
 RENDER_EXTERNAL_HOSTNAME = os.environ.get("RENDER_EXTERNAL_HOSTNAME")
 if RENDER_EXTERNAL_HOSTNAME:
