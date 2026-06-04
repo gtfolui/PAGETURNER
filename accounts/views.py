@@ -45,7 +45,8 @@ def login_view(request):
             password=form.cleaned_data["password"],
         )
         if user is not None:
-            login(request, user)
+            # Fixed: explicitly added the authentication backend path
+            login(request, user, backend='django.contrib.auth.backends.ModelBackend')
             next_url = request.GET.get("next") or reverse("books:home")
             return redirect(next_url)
         messages.error(request, "Invalid username or password.")
@@ -61,7 +62,8 @@ def signup_view(request):
     if request.method == "POST" and form.is_valid():
         user = form.save()
         _send_verification_email(request, user)
-        login(request, user)
+        # Fixed: explicitly added the authentication backend path
+        login(request, user, backend='django.contrib.auth.backends.ModelBackend')
         if settings.REQUIRE_EMAIL_VERIFICATION:
             messages.info(
                 request,
