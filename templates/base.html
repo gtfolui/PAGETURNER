@@ -4,259 +4,480 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
   <title>{% block title %}PageTurner{% endblock %}</title>
-  <link rel="stylesheet" href="{% static 'css/style.css' %}">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
-  
   <style>
-    /* Inspo Core Variables - Mapped exactly from download (33).jpg */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
     :root {
-      --bg-dashboard: #f4f6fa;
+      --bg: #f4f6fa;
       --bg-sidebar: #191d32;
       --bg-sidebar-active: #222741;
-      --text-sidebar-muted: #737b9e;
-      --accent-blue: #3d42df;
-      --border-color: #ebedf2;
-      --topbar-height: 70px;
+      --text-muted: #737b9e;
+      --accent: #6323a6;
+      --accent-light: #7c3aed;
+      --border: #ebedf2;
+      --surface: #ffffff;
+      --topbar-h: 64px;
     }
 
+    html, body { min-height: 100%; }
     body {
-      margin: 0;
-      padding: 0;
-      background-color: var(--bg-dashboard);
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    }
-
-    /* Master App Grid Structure */
-    .app {
-      display: grid;
-      grid-template-columns: 260px 1fr;
-      min-height: 100vh;
-    }
-
-    /* Left Sidebar Overhaul — Matching download (33).jpg */
-    .sidebar {
-      background-color: var(--bg-sidebar);
-      color: #ffffff;
-      padding: 24px 16px;
-      display: flex;
-      flex-direction: column;
-      border-right: 1px solid rgba(255, 255, 255, 0.05);
-    }
-
-    .sidebar .logo {
-      font-size: 22px;
-      font-weight: 700;
-      color: #ffffff;
-      text-decoration: none;
-      margin-bottom: 32px;
-      padding-left: 12px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .sidebar .logo span {
-      color: var(--accent-blue);
-    }
-
-    .sidebar-section {
-      margin-bottom: 24px;
-    }
-
-    .sidebar-label {
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      color: var(--text-sidebar-muted);
-      font-weight: 700;
-      margin-bottom: 12px;
-      padding-left: 12px;
-    }
-
-    .sidebar-item {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 12px 14px;
-      color: var(--text-sidebar-muted);
-      text-decoration: none;
-      font-size: 14px;
-      font-weight: 500;
-      border-radius: 10px;
-      transition: all 0.2s ease;
-      margin-bottom: 4px;
-    }
-
-    .sidebar-item i {
-      font-size: 18px;
-    }
-
-    .sidebar-item:hover {
-      color: #ffffff;
-      background-color: rgba(255, 255, 255, 0.03);
-    }
-
-    .sidebar-item.active {
-      background-color: var(--bg-sidebar-active);
-      color: #ffffff;
-      font-weight: 600;
-    }
-
-    .sidebar-item .badge {
-      background-color: #ff4d4f;
-      color: white;
-      font-size: 11px;
-      padding: 2px 6px;
-      border-radius: 10px;
-      margin-left: auto;
-    }
-
-    /* Right Main Layout Wrapper */
-    .main {
-      display: flex;
-      flex-direction: column;
-      height: 100vh;
-      overflow-y: auto;
-    }
-
-    /* Top Floating Utility Bar */
-    .topbar {
-      height: var(--topbar-height);
-      background-color: transparent;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 32px;
-      margin-top: 10px;
-    }
-
-    /* Elegant Omnibar Search Container */
-    .search-bar {
-      position: relative;
-      width: 320px;
-    }
-
-    .search-bar i {
-      position: absolute;
-      left: 14px;
-      top: 50%;
-      transform: translateY(-50%);
-      color: #a0a5b5;
-      font-size: 16px;
-    }
-
-    .search-bar input {
-      width: 100%;
-      padding: 10px 16px 10px 40px;
-      border: 1px solid transparent;
-      border-radius: 10px;
-      background-color: #ebedf2;
-      font-size: 13px;
-      color: var(--text-sidebar-muted);
-      transition: all 0.2s ease;
-    }
-
-    .search-bar input:focus {
-      outline: none;
-      background-color: #ffffff;
-      border-color: var(--border-color);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.03);
-    }
-
-    /* Topbar Navigation & Actions */
-    .topbar-actions {
-      display: flex;
-      align-items: center;
-      gap: 20px;
-    }
-
-    .nav-links {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .nav-btn {
-      color: #5c6275;
-      text-decoration: none;
-      font-size: 14px;
-      font-weight: 500;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      padding: 8px 12px;
-      border-radius: 8px;
-      position: relative;
-    }
-
-    .nav-btn:hover {
-      background-color: rgba(0, 0, 0, 0.03);
-    }
-
-    .notif-dot {
-      position: absolute;
-      top: 4px;
-      right: 4px;
-      width: 8px;
-      height: 8px;
-      background-color: #ff4d4f;
-      border-radius: 50%;
-    }
-
-    /* Identity Avatar Frame Layout */
-    .user-profile-wrapper {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      text-decoration: none;
-    }
-
-    .user-profile-name {
-      font-size: 13px;
-      font-weight: 600;
+      margin: 0; padding: 0;
+      background: var(--bg);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       color: #1e2229;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { text-decoration: none; color: inherit; }
+    button { font-family: inherit; }
+    .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }
+
+    /* ── App Shell ── */
+    .app { display: grid; grid-template-columns: 240px 1fr; min-height: 100vh; }
+
+    /* ── Sidebar ── */
+    .sidebar {
+      background: var(--bg-sidebar);
+      display: flex; flex-direction: column;
+      padding: 20px 12px;
+      position: sticky; top: 0; height: 100vh; overflow-y: auto;
+    }
+    .logo {
+      font-size: 20px; font-weight: 700; color: #fff;
+      display: flex; align-items: center; gap: 8px;
+      padding: 4px 10px; margin-bottom: 28px;
+    }
+    .logo span { color: #a78bfa; }
+    .sidebar-section { margin-bottom: 20px; }
+    .sidebar-label {
+      font-size: 10px; text-transform: uppercase; letter-spacing: 1.2px;
+      color: rgba(255,255,255,.3); font-weight: 700;
+      padding: 0 10px; margin-bottom: 6px;
+    }
+    .sidebar-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 12px; border-radius: 10px;
+      color: var(--text-muted); font-size: 13.5px; font-weight: 500;
+      transition: all .15s; margin-bottom: 2px; white-space: nowrap;
+    }
+    .sidebar-item i { font-size: 17px; flex-shrink: 0; }
+    .sidebar-item:hover { color: #fff; background: rgba(255,255,255,.05); }
+    .sidebar-item.active { background: var(--bg-sidebar-active); color: #fff; font-weight: 600; }
+    .sidebar-item .badge {
+      margin-left: auto; background: #ff4d4f; color: #fff;
+      font-size: 10px; padding: 2px 6px; border-radius: 10px; font-weight: 700;
     }
 
+    /* ── Main ── */
+    .main { display: flex; flex-direction: column; min-height: 100vh; min-width: 0; }
+
+    /* ── Topbar ── */
+    .topbar {
+      height: var(--topbar-h); background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 12px;
+      padding: 0 28px; position: sticky; top: 0; z-index: 40;
+      box-shadow: 0 1px 4px rgba(0,0,0,.06);
+    }
+    .search-bar { position: relative; width: 300px; }
+    .search-bar i { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #a0a5b5; font-size: 15px; pointer-events: none; }
+    .search-bar input {
+      width: 100%; padding: 9px 14px 9px 36px;
+      border: 1.5px solid var(--border); border-radius: 100px;
+      background: #f0f0f5; font-size: 13px; color: #1e2229; font-family: inherit;
+      transition: all .15s;
+    }
+    .search-bar input:focus { outline: none; border-color: var(--accent-light); background: #fff; box-shadow: 0 0 0 3px rgba(124,58,237,.1); }
+    .nav-links { display: flex; gap: 4px; margin-left: auto; align-items: center; }
+    .nav-btn {
+      padding: 7px 10px; border: none; background: none; cursor: pointer;
+      font-size: 13px; color: #5c6275; border-radius: 8px;
+      display: flex; align-items: center; gap: 6px; transition: all .12s;
+      position: relative; text-decoration: none; white-space: nowrap;
+    }
+    .nav-btn:hover, .nav-btn.active { background: #f0f0f5; color: #1e2229; }
+    .nav-btn i { font-size: 18px; }
+    .notif-dot {
+      position: absolute; top: 5px; right: 5px;
+      width: 8px; height: 8px; background: #ff4d4f; border-radius: 50%;
+    }
+    .user-profile-wrapper { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .user-profile-name { font-size: 13px; font-weight: 600; color: #1e2229; }
     .avatar {
-      width: 38px;
-      height: 38px;
-      border-radius: 50%;
-      background-size: cover;
-      background-position: center;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-size: 13px;
-      font-weight: 600;
-      border: 2px solid #ffffff;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      width: 36px; height: 36px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; font-size: 12px; font-weight: 700;
+      border: 2px solid #fff; box-shadow: 0 2px 8px rgba(0,0,0,.12);
+      background-size: cover; background-position: center; flex-shrink: 0;
     }
 
-    /* Main Viewport Content Card Space */
-    .content {
-      flex: 1;
-      padding: 8px 32px 32px 32px;
-    }
+    /* ── Content ── */
+    .content { flex: 1; padding: 24px 28px 48px; overflow-y: auto; }
 
-    /* Custom Verification Banner */
+    /* ── Verify banner ── */
     .verify-banner {
-      background-color: #fff2e8;
-      border: 1px solid #ffbb96;
-      padding: 12px 16px;
-      border-radius: 12px;
-      margin-bottom: 20px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 13px;
-      color: #d4380d;
+      display: flex; align-items: center; gap: 10px;
+      background: #fff2e8; border: 1px solid #ffbb96;
+      padding: 10px 14px; border-radius: 10px; margin-bottom: 16px;
+      font-size: 13px; color: #d4380d;
     }
-    .verify-banner a { color: #d4380d; font-weight:600; }
+    .verify-banner a { color: #d4380d; font-weight: 600; }
 
-    @media (max-width: 992px) {
+    /* ── Page titles ── */
+    .page-title { font-size: 22px; font-weight: 800; color: #1f1135; margin-bottom: 4px; }
+    .page-sub { font-size: 14px; color: #796a91; margin-bottom: 18px; }
+
+    /* ── Book cards ── */
+    .book-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px,1fr)); gap: 16px; }
+    .book-card {
+      background: #f5f0fa; border: 1px solid #ebdff5; border-radius: 16px;
+      overflow: hidden; cursor: pointer; transition: all .2s ease;
+    }
+    .book-card:hover { background: #fff; transform: translateY(-3px); box-shadow: 0 10px 24px rgba(99,35,166,.12); }
+    .book-cover { width: 100%; aspect-ratio: 2/3; display: flex; align-items: center; justify-content: center; overflow: hidden; font-size: 10px; font-weight: 700; text-align: center; padding: 8px; line-height: 1.3; }
+    .book-cover img { width: 100%; height: 100%; object-fit: cover; }
+    .book-title-sm { font-size: 13px; font-weight: 700; color: #1f1135; padding: 8px 10px 2px; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .book-author-sm { font-size: 11px; color: #796a91; padding: 0 10px 6px; }
+    .stars-sm { display: flex; gap: 2px; padding: 0 10px 10px; }
+    .star-icon { font-size: 11px; color: #f59e0b; }
+    .star-icon.empty { color: #d1c4e9; }
+
+    /* ── Remote card ── */
+    .remote-card { background: #f5f0fa; border: 1px solid #ebdff5; border-radius: 16px; overflow: hidden; cursor: pointer; transition: all .2s ease; position: relative; }
+    .remote-card:hover { background: #fff; transform: translateY(-3px); box-shadow: 0 10px 24px rgba(99,35,166,.12); }
+    .remote-badge { position: absolute; top: 8px; right: 8px; font-size: 10px; font-weight: 800; background: var(--accent); color: #fff; padding: 3px 7px; border-radius: 999px; }
+    .book-title { font-size: 13px; font-weight: 700; color: #1f1135; padding: 8px 10px 2px; line-height: 1.3; }
+    .book-author { font-size: 11px; color: #796a91; padding: 0 10px 10px; }
+
+    /* ── Filters ── */
+    .discover-filters { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; }
+    .filter-btn { padding: 8px 14px; border-radius: 999px; background: #f5f0fa; border: 1px solid #ebdff5; color: #796a91; font-size: 13px; font-weight: 700; text-decoration: none; transition: all .15s; }
+    .filter-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(99,35,166,.08); }
+    .filter-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+    /* ── Section head ── */
+    .section-head { margin-bottom: 12px; margin-top: 16px; }
+    .section-title { font-size: 17px; font-weight: 800; color: #1f1135; }
+
+    /* ── Shelf tabs ── */
+    .shelf-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; }
+    .shelf-tab { padding: 9px 14px; border-radius: 999px; background: #f5f0fa; border: 1px solid #ebdff5; color: #796a91; font-size: 13px; font-weight: 700; text-decoration: none; transition: all .15s; }
+    .shelf-tab.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+    /* ── Shelf list ── */
+    .shelf-list { display: flex; flex-direction: column; gap: 10px; }
+    .shelf-item { display: grid; grid-template-columns: 54px 1fr auto; gap: 14px; align-items: center; background: #f5f0fa; border: 1px solid #ebdff5; border-radius: 16px; padding: 12px 14px; cursor: pointer; transition: all .2s ease; }
+    .shelf-item:hover { background: #fff; box-shadow: 0 8px 20px rgba(99,35,166,.08); transform: translateY(-1px); }
+    .shelf-cover { width: 54px; height: 74px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 8px; font-weight: 700; text-align: center; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,.1); }
+    .shelf-book-title { font-size: 14px; font-weight: 700; color: #1f1135; margin-bottom: 2px; }
+    .shelf-book-author { font-size: 12px; color: #796a91; }
+    .shelf-progress { margin-top: 6px; }
+    .progress-text { font-size: 11px; color: #796a91; margin-bottom: 4px; }
+    .progress-bar { height: 5px; background: #e9e2f0; border-radius: 999px; overflow: hidden; }
+    .progress-fill { height: 100%; background: var(--accent); border-radius: 999px; }
+    .shelf-actions { display: flex; gap: 6px; }
+    .icon-btn { background: #fff; border: 1px solid #ebdff5; border-radius: 8px; padding: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all .15s; color: #796a91; }
+    .icon-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 10px rgba(99,35,166,.1); }
+    .icon-btn i { font-size: 14px; }
+
+    /* ── Empty state ── */
+    .empty-state { text-align: center; padding: 40px; background: #f5f0fa; border: 1px solid #ebdff5; border-radius: 20px; color: #796a91; }
+    .empty-state h3 { font-size: 17px; font-weight: 700; color: #1f1135; margin-top: 8px; }
+    .empty-state i { font-size: 32px; color: var(--accent); }
+
+    /* ── Messages ── */
+    .message-list { list-style: none; padding: 0; margin-bottom: 16px; display: flex; flex-direction: column; gap: 8px; }
+    .message { background: #eef2ff; border: 1px solid var(--border); padding: 10px 14px; border-radius: 10px; display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--accent); }
+
+    /* ── Toast ── */
+    .toast { position: fixed; bottom: 24px; right: 24px; background: #1e1e2e; border-radius: 10px; padding: 10px 16px; font-size: 13px; display: none; align-items: center; gap: 10px; z-index: 500; color: #fff; box-shadow: 0 8px 24px rgba(0,0,0,.2); }
+    .toast.show { display: flex; }
+    .toast i { color: #a78bfa; font-size: 16px; }
+
+    /* ── Modal overlay ── */
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.5); z-index: 200; display: flex; align-items: center; justify-content: center; padding: 16px; backdrop-filter: blur(4px); }
+    .modal { background: #fff; border-radius: 20px; max-width: 620px; width: 100%; max-height: 90vh; overflow-y: auto; box-shadow: 0 24px 60px rgba(0,0,0,.2); }
+    .modal-wide { max-width: 780px; }
+    .modal-head { display: flex; align-items: center; justify-content: space-between; padding: 18px 22px; border-bottom: 1px solid var(--border); }
+    .modal-title { font-size: 16px; font-weight: 700; color: #1f1135; }
+    .modal-body { padding: 22px; }
+
+    /* ── Book modal internals ── */
+    .bk-hero { display: flex; gap: 22px; margin-bottom: 22px; align-items: flex-start; }
+    .bk-cover-wrap { flex-shrink: 0; width: 160px; }
+    .modal-cover { width: 160px; height: 240px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; text-align: center; padding: 14px; overflow: hidden; box-shadow: 0 8px 24px rgba(0,0,0,.15); }
+    .modal-cover img { width: 100%; height: 100%; object-fit: cover; border-radius: inherit; }
+    .bk-want-btn { width: 100%; margin-top: 10px; padding: 9px 12px; border-radius: 100px; border: 1.5px solid var(--border); background: #fff; color: #1e2229; font-weight: 600; font-size: 13px; display: flex; align-items: center; justify-content: center; gap: 6px; cursor: pointer; transition: all .15s; }
+    .bk-want-btn:hover { border-color: var(--accent-light); background: #f5f0fa; }
+    .bk-want-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .bk-meta { flex: 1; min-width: 0; }
+    .bk-title { font-size: 22px; font-weight: 800; color: #1f1135; line-height: 1.2; margin-bottom: 6px; }
+    .bk-author { font-size: 14px; color: #796a91; margin-bottom: 12px; }
+    .author-link { color: var(--accent); font-weight: 600; }
+    .bk-rating-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+    .bk-stars { display: flex; gap: 2px; color: #f59e0b; }
+    .bk-stars i { font-size: 16px; }
+    .bk-rating-num { font-size: 20px; font-weight: 800; color: #1f1135; }
+    .bk-rating-meta { font-size: 12px; color: #796a91; }
+    .bk-genres { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+    .genre-pill { font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 999px; background: rgba(99,35,166,.08); color: var(--accent); text-transform: uppercase; letter-spacing: .04em; }
+    .bk-desc { font-size: 13.5px; line-height: 1.6; color: #3d2d52; white-space: pre-wrap; }
+    .bk-desc.is-collapsed { display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
+    .bk-show-more { background: none; border: 0; padding: 4px 0; cursor: pointer; color: var(--accent); font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; gap: 4px; margin-top: 4px; }
+    .bk-stats { display: flex; flex-wrap: wrap; gap: 12px; font-size: 12px; color: #796a91; margin-top: 8px; }
+    .bk-stats span { display: inline-flex; align-items: center; gap: 4px; }
+    .bk-section { margin-top: 24px; padding-top: 18px; border-top: 1px solid var(--border); }
+    .bk-section-head { font-size: 16px; font-weight: 800; color: #1f1135; margin-bottom: 14px; }
+
+    /* ── Star rating ── */
+    .star-rating { display: flex; align-items: center; gap: 2px; margin: 8px 0; flex-wrap: wrap; }
+    .star-rating .star-btn { background: none; border: 0; padding: 5px; cursor: pointer; display: inline-flex; border-radius: 8px; transition: background .12s; }
+    .star-rating .star-btn:hover { background: rgba(99,35,166,.08); }
+    .star-rating .star-btn i { font-size: 26px; color: #d1c4e9; transition: color .1s; pointer-events: none; }
+    .star-rating .star-btn.lit i { color: #f59e0b; }
+    .rating-label { margin-left: 8px; font-size: 13px; color: #796a91; }
+
+    /* ── Shelf badges ── */
+    .shelf-select { display: flex; gap: 6px; flex-wrap: wrap; margin: 10px 0 14px; }
+    .shelf-badge { padding: 7px 14px; border: 1.5px solid var(--border); border-radius: 999px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all .12s; color: #796a91; background: #fff; }
+    .shelf-badge:hover { border-color: var(--accent-light); }
+    .shelf-badge.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+    /* ── Review form ── */
+    .review-form textarea { width: 100%; min-height: 80px; border: 1.5px solid var(--border); border-radius: 10px; padding: 10px 12px; font-family: inherit; font-size: 13px; color: #1e2229; background: #fafafa; resize: vertical; }
+    .review-form textarea:focus { outline: none; border-color: var(--accent-light); }
+    .field-label { font-size: 13px; font-weight: 600; margin-bottom: 5px; margin-top: 8px; color: #1f1135; }
+
+    /* ── Buttons ── */
+    .btn-primary, .btn-secondary { padding: 10px 22px; border-radius: 100px; font-size: 13px; font-family: inherit; cursor: pointer; font-weight: 700; transition: all .15s; border: 1.5px solid transparent; display: inline-flex; align-items: center; gap: 6px; }
+    .btn-primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .btn-primary:hover { background: var(--accent-light); border-color: var(--accent-light); box-shadow: 0 4px 14px rgba(99,35,166,.3); }
+    .btn-secondary { background: #fff; color: #796a91; border-color: var(--border); }
+    .btn-secondary:hover { background: #f5f0fa; color: #1e2229; }
+
+    /* ── Author card ── */
+    .bk-author-card { display: flex; gap: 12px; align-items: center; margin-bottom: 12px; }
+    .bk-author-avatar { width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 700; color: #fff; flex-shrink: 0; }
+    .bk-author-name { font-size: 15px; font-weight: 700; color: #1f1135; }
+    .bk-author-stat { font-size: 12px; color: #796a91; margin-top: 2px; }
+    .bk-author-books { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 4px; margin-top: 4px; }
+    .bk-mini-book { flex: 0 0 80px; cursor: pointer; }
+    .bk-mini-cover { width: 80px; height: 116px; border-radius: 7px; display: flex; align-items: center; justify-content: center; padding: 6px; font-size: 10px; text-align: center; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,.1); }
+    .bk-mini-title { font-size: 11px; color: #1f1135; margin-top: 5px; line-height: 1.3; }
+
+    /* ── Community reviews ── */
+    .bk-breakdown { display: flex; gap: 20px; margin-bottom: 18px; flex-wrap: wrap; }
+    .bk-bd-summary { flex: 0 0 auto; min-width: 120px; }
+    .bk-bd-avg { font-size: 34px; font-weight: 800; color: #1f1135; line-height: 1; }
+    .bk-bd-count { font-size: 12px; color: #796a91; margin-top: 4px; }
+    .bk-bd-bars { flex: 1; min-width: 200px; display: flex; flex-direction: column; gap: 4px; }
+    .bk-bd-row { display: flex; align-items: center; gap: 8px; font-size: 12px; color: #796a91; }
+    .bk-bd-label { width: 44px; display: flex; align-items: center; gap: 2px; }
+    .bk-bd-label i { color: #f59e0b; font-size: 12px; }
+    .bk-bd-bar { flex: 1; height: 7px; background: #ede9f5; border-radius: 4px; overflow: hidden; }
+    .bk-bd-bar-fill { height: 100%; background: var(--accent); border-radius: 4px; transition: width .4s; }
+    .bk-bd-pct { width: 36px; text-align: right; font-size: 11px; color: #796a91; }
+    .bk-reviews-list { display: flex; flex-direction: column; gap: 0; }
+    .bk-review-item { display: flex; gap: 12px; padding: 14px 0; border-top: 1px solid var(--border); }
+    .bk-review-item:first-child { border-top: 0; padding-top: 0; }
+    .bk-review-avatar { width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #fff; flex-shrink: 0; }
+    .bk-review-content { flex: 1; min-width: 0; }
+    .bk-review-head { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 4px; }
+    .bk-review-name { font-size: 13px; font-weight: 700; color: #1f1135; }
+    .bk-review-date { font-size: 11px; color: #796a91; }
+    .bk-review-stars { display: flex; gap: 2px; color: #f59e0b; margin: 2px 0; }
+    .bk-review-stars i { font-size: 12px; }
+    .bk-review-text { font-size: 13px; line-height: 1.5; color: #796a91; margin-top: 4px; }
+    .bk-empty { font-size: 13px; color: #796a91; font-style: italic; padding: 8px 0; }
+
+    /* ── Author modal ── */
+    .author-photo { width: 90px; height: 126px; border-radius: 8px; overflow: hidden; flex-shrink: 0; background: #f5f0fa; }
+    .author-photo img { width: 100%; height: 100%; object-fit: cover; }
+    .author-photo-fallback { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 36px; font-weight: 700; color: var(--accent); }
+
+    /* ── Feed ── */
+    .feed { display: flex; flex-direction: column; gap: 10px; }
+    .feed-card { background: #fff; border: 1px solid var(--border); border-radius: 16px; padding: 14px 16px; transition: box-shadow .12s; }
+    .feed-card:hover { box-shadow: 0 4px 16px rgba(99,35,166,.08); }
+    .feed-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+    .user-avatar { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #fff; flex-shrink: 0; }
+    .feed-meta { flex: 1; min-width: 0; }
+    .feed-user { font-size: 13px; font-weight: 600; }
+    .feed-time { font-size: 11px; color: #796a91; }
+    .feed-action { font-size: 13px; color: #796a91; margin-bottom: 8px; }
+    .feed-action strong { color: #1f1135; font-weight: 700; }
+    .feed-book { display: flex; gap: 10px; background: #f5f0fa; border-radius: 10px; padding: 10px; cursor: pointer; transition: background .12s; }
+    .feed-book:hover { background: #ede9f5; }
+    .feed-cover { width: 42px; height: 60px; border-radius: 6px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 8px; text-align: center; overflow: hidden; }
+    .feed-book-info { flex: 1; min-width: 0; }
+    .feed-book-title { font-size: 13px; font-weight: 700; margin-bottom: 2px; color: #1f1135; }
+    .feed-book-author { font-size: 11px; color: #796a91; }
+    .feed-review { font-size: 13px; color: #796a91; line-height: 1.5; font-style: italic; margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border); }
+    .feed-actions { display: flex; gap: 4px; margin-top: 10px; }
+    .feed-btn { border: none; background: none; cursor: pointer; font-size: 12px; color: #796a91; padding: 5px 9px; border-radius: 8px; display: flex; align-items: center; gap: 4px; transition: all .12s; font-family: inherit; }
+    .feed-btn:hover { background: #f5f0fa; color: #1f1135; }
+    .feed-btn.liked { color: #ef4444; }
+    .feed-btn i { font-size: 14px; }
+
+    /* ── Friends ── */
+    .friends-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px,1fr)); gap: 12px; }
+    .friend-card { background: #fff; border: 1px solid var(--border); border-radius: 16px; padding: 18px; text-align: center; transition: all .15s; }
+    .friend-card:hover { border-color: var(--accent-light); transform: translateY(-2px); box-shadow: 0 6px 16px rgba(99,35,166,.1); }
+    .friend-avatar { width: 46px; height: 46px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 700; margin: 0 auto 10px; color: #fff; }
+    .friend-name { font-size: 13px; font-weight: 700; margin-bottom: 2px; color: #1f1135; }
+    .friend-stat { font-size: 11px; color: #796a91; }
+    .friend-btn { margin-top: 10px; width: 100%; padding: 7px; font-size: 12px; font-weight: 600; border-radius: 100px; cursor: pointer; border: 1.5px solid var(--border); background: #fff; font-family: inherit; transition: all .12s; color: #796a91; }
+    .friend-btn:hover { border-color: var(--accent-light); color: var(--accent); }
+    .friend-btn.following { background: rgba(99,35,166,.08); border-color: var(--accent-light); color: var(--accent); }
+
+    /* ── Notifications ── */
+    .notification-list { display: flex; flex-direction: column; gap: 8px; }
+    .notif { background: #fff; border: 1px solid var(--border); border-radius: 14px; padding: 12px 14px; display: flex; gap: 10px; align-items: flex-start; cursor: pointer; transition: all .12s; }
+    .notif:hover { box-shadow: 0 4px 12px rgba(99,35,166,.08); }
+    .notif.unread { border-left: 3px solid var(--accent); background: rgba(99,35,166,.02); }
+    .notif-icon { width: 34px; height: 34px; border-radius: 50%; background: rgba(99,35,166,.1); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .notif-icon i { font-size: 15px; color: var(--accent); }
+    .notif-text { font-size: 13px; color: #1f1135; line-height: 1.4; }
+    .notif-time { font-size: 11px; color: #796a91; margin-top: 3px; }
+
+    /* ── Stats ── */
+    .stats-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 14px; margin-bottom: 22px; }
+    .stat-card { background: #fff; border: 1px solid var(--border); border-radius: 16px; padding: 18px; }
+    .stat-val { font-size: 28px; font-weight: 800; color: #1f1135; line-height: 1; }
+    .stat-label { font-size: 12px; color: #796a91; margin-top: 4px; }
+    .genre-bar { margin-bottom: 12px; }
+    .genre-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; font-size: 13px; }
+    .genre-name { color: #1f1135; font-weight: 500; }
+    .genre-count { color: #796a91; font-size: 12px; }
+    .genre-track { height: 7px; background: #ede9f5; border-radius: 4px; overflow: hidden; }
+    .genre-fill { height: 100%; background: var(--accent); border-radius: 4px; transition: width .4s; }
+
+    /* ── Challenge ── */
+    .challenge-card { background: #191d32; border-radius: 16px; padding: 20px 22px; margin-bottom: 22px; color: #fff; position: relative; overflow: hidden; }
+    .challenge-title { font-size: 16px; font-weight: 700; color: #fff; }
+    .challenge-ring { position: relative; width: 88px; height: 88px; margin: 0 auto 14px; }
+    .ring-svg { transform: rotate(-90deg); }
+    .ring-track { fill: none; stroke: rgba(255,255,255,.1); stroke-width: 7; }
+    .ring-fill { fill: none; stroke: #a78bfa; stroke-width: 7; stroke-linecap: round; transition: stroke-dashoffset .5s; }
+    .ring-text { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    .ring-num { font-size: 22px; font-weight: 700; color: #fff; line-height: 1; }
+    .ring-total { font-size: 11px; color: rgba(255,255,255,.5); margin-top: 2px; }
+    .challenge-stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; text-align: center; }
+    .ch-stat-val { font-size: 17px; font-weight: 700; color: #fff; }
+    .ch-stat-label { font-size: 10px; color: rgba(255,255,255,.5); }
+
+    /* ── Profile ── */
+    .profile-header { display: flex; align-items: center; gap: 22px; background: #fff; border: 1px solid var(--border); border-radius: 16px; padding: 22px; margin-bottom: 22px; }
+    .profile-avatar { width: 90px; height: 90px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 30px; font-weight: 700; color: #fff; flex-shrink: 0; }
+    .profile-name { font-size: 24px; font-weight: 800; color: #1f1135; margin-bottom: 6px; }
+    .profile-meta { display: flex; flex-wrap: wrap; gap: 14px; color: #796a91; font-size: 13px; margin-bottom: 6px; }
+    .profile-meta span { display: inline-flex; align-items: center; gap: 4px; }
+    .profile-bio { color: #796a91; font-size: 14px; line-height: 1.5; }
+
+    /* ── Heatmap ── */
+    .heatmap-wrap { background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 14px; overflow-x: auto; }
+    .hm-grid { display: flex; gap: 3px; }
+    .hm-col { display: flex; flex-direction: column; gap: 3px; }
+    .hm-cell { width: 11px; height: 11px; border-radius: 2px; background: #ede9f5; display: inline-block; }
+    .hm-cell.lvl1 { background: rgba(99,35,166,.25); }
+    .hm-cell.lvl2 { background: rgba(99,35,166,.5); }
+    .hm-cell.lvl3 { background: rgba(99,35,166,.75); }
+    .hm-cell.lvl4 { background: var(--accent); }
+
+    /* ── Range input ── */
+    input[type=range] { -webkit-appearance: none; height: 6px; background: #ede9f5; border-radius: 3px; outline: none; }
+    input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; background: var(--accent); border-radius: 50%; cursor: pointer; }
+
+    /* ── Buddy reads ── */
+    .buddy-card { display: flex; gap: 14px; align-items: center; background: #fff; border: 1px solid var(--border); border-radius: 14px; padding: 14px; margin-bottom: 12px; }
+    .buddy-cover { width: 50px; height: 72px; border-radius: 7px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 9px; text-align: center; padding: 4px; overflow: hidden; }
+    .buddy-cover img { width: 100%; height: 100%; object-fit: cover; border-radius: inherit; }
+    .buddy-info { flex: 1; min-width: 0; }
+    .buddy-book-title { font-weight: 700; font-size: 14px; color: #1f1135; }
+    .buddy-sub { font-size: 13px; color: #796a91; margin-top: 2px; }
+    .buddy-actions { display: flex; gap: 8px; margin-top: 10px; }
+
+    /* ── Request cards ── */
+    .incoming-requests { display: flex; flex-direction: column; gap: 10px; margin-bottom: 22px; }
+    .request-card { display: flex; align-items: center; gap: 12px; background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 12px 16px; }
+    .request-actions { display: flex; gap: 8px; margin-left: auto; }
+    .request-actions .btn-primary, .request-actions .btn-secondary { padding: 6px 14px; font-size: 12px; }
+
+    /* ── Auth pages ── */
+    .pt-auth-wrap { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: #0f0f1a; padding: 20px; }
+    .pt-auth-card { display: flex; width: 100%; max-width: 900px; min-height: 560px; border-radius: 20px; overflow: hidden; box-shadow: 0 25px 60px rgba(0,0,0,.55); }
+    .pt-auth-left { flex: 0 0 42%; background: linear-gradient(135deg, #1a1035 0%, #2d1b69 50%, #1a1035 100%); display: flex; flex-direction: column; justify-content: space-between; padding: 36px; position: relative; overflow: hidden; }
+    .pt-auth-brand { display: flex; align-items: center; gap: 10px; color: #fff; font-size: 1.2rem; font-weight: 700; position: relative; z-index: 1; }
+    .pt-auth-brand span { color: #B8A0FF; }
+    .pt-auth-brand-icon { width: 36px; height: 36px; background: rgba(255,255,255,.12); border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 1rem; color: #fff; }
+    .pt-auth-left-body { flex: 1; display: flex; align-items: center; justify-content: center; position: relative; z-index: 1; }
+    .pt-auth-graphic { font-size: 80px; opacity: .18; user-select: none; }
+    .pt-auth-left-foot { position: relative; z-index: 1; }
+    .pt-auth-tagline { font-size: 1.55rem; font-weight: 700; color: #fff; line-height: 1.3; margin-bottom: 10px; }
+    .pt-auth-tagline span { color: #B8A0FF; }
+    .pt-auth-tagline-sub { font-size: .83rem; color: rgba(255,255,255,.5); line-height: 1.6; margin-bottom: 16px; }
+    .pt-auth-dots { display: flex; gap: 6px; }
+    .pt-dot { width: 24px; height: 4px; border-radius: 2px; background: rgba(255,255,255,.25); }
+    .pt-dot-active { background: #7c5cfc; width: 32px; }
+    .pt-auth-right { flex: 1; background: #13131f; padding: 48px 44px; display: flex; flex-direction: column; justify-content: center; overflow-y: auto; }
+    .pt-auth-heading { font-size: 1.8rem; font-weight: 700; color: #fff; margin-bottom: 6px; }
+    .pt-auth-sub { font-size: .875rem; color: rgba(255,255,255,.45); margin-bottom: 28px; }
+    .pt-auth-sub a { color: #7c5cfc; font-weight: 600; }
+    .pt-auth-error { background: rgba(239,68,68,.15); border: 1px solid rgba(239,68,68,.3); color: #ff8080; border-radius: 10px; padding: 10px 14px; font-size: 13px; margin-bottom: 16px; }
+    .pt-social-btn { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 11px 14px; border-radius: 10px; border: 1.5px solid #2a2a3e; background: #1e1e2e; color: rgba(255,255,255,.8); font-size: .875rem; font-weight: 600; font-family: inherit; cursor: pointer; text-decoration: none; transition: all .2s; margin-bottom: 4px; }
+    .pt-social-btn:hover { border-color: #7c5cfc; background: #252535; color: #fff; }
+    .pt-auth-divider { display: flex; align-items: center; gap: 12px; margin: 18px 0; color: rgba(255,255,255,.25); font-size: .78rem; }
+    .pt-auth-divider::before, .pt-auth-divider::after { content: ''; flex: 1; height: 1px; background: #2a2a3e; }
+    .pt-field { display: flex; flex-direction: column; gap: 5px; margin-bottom: 14px; }
+    .pt-field label { font-size: .75rem; font-weight: 500; color: rgba(255,255,255,.5); text-transform: uppercase; letter-spacing: .5px; }
+    .pt-field input { padding: 11px 14px; border: 1.5px solid #2a2a3e; border-radius: 10px; font-family: inherit; font-size: .9rem; background: #1e1e2e; color: #fff; transition: all .2s; width: 100%; }
+    .pt-field input::placeholder { color: rgba(255,255,255,.22); }
+    .pt-field input:focus { outline: none; border-color: #7c5cfc; box-shadow: 0 0 0 3px rgba(124,92,252,.15); }
+    .pt-field-hint { font-size: .72rem; color: rgba(255,255,255,.3); margin-top: 2px; }
+    .pt-errors { list-style: none; font-size: .78rem; color: #ff8080; margin-top: 3px; }
+    .pt-field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .pt-auth-submit { width: 100%; padding: 12px; border: none; border-radius: 10px; background: #7c5cfc; color: #fff; font-size: .95rem; font-weight: 700; font-family: inherit; cursor: pointer; transition: all .2s; margin-top: 4px; }
+    .pt-auth-submit:hover { background: #6a4de8; box-shadow: 0 6px 20px rgba(124,92,252,.4); }
+
+    /* ── Profile edit ── */
+    .profile-edit-form { background: #fff; border: 1px solid var(--border); border-radius: 16px; padding: 24px; }
+    .profile-edit-form input[type="text"], .profile-edit-form input[type="email"], .profile-edit-form textarea { width: 100%; padding: 9px 12px; border: 1.5px solid var(--border); border-radius: 8px; font-size: 13px; color: #1e2229; background: #fafafa; font-family: inherit; }
+    .profile-edit-form input:focus, .profile-edit-form textarea:focus { outline: none; border-color: var(--accent-light); }
+    .profile-edit-avatar { text-align: center; margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid var(--border); }
+    .avatar-preview { width: 110px; height: 110px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 34px; font-weight: 700; color: #fff; object-fit: cover; }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+    /* ── Responsive ── */
+    @media (max-width: 960px) {
+      .app { grid-template-columns: 64px 1fr; }
+      .sidebar { padding: 16px 8px; }
+      .logo { font-size: 0; justify-content: center; padding: 0; }
+      .logo i { font-size: 22px; }
+      .sidebar-label { display: none; }
+      .sidebar-item { justify-content: center; padding: 10px; }
+      .sidebar-item span, .sidebar-item .badge { display: none; }
+      .sidebar-item i { font-size: 18px; }
+    }
+    @media (max-width: 680px) {
       .app { grid-template-columns: 1fr; }
       .sidebar { display: none; }
+      .content { padding: 16px; }
+      .stats-grid { grid-template-columns: 1fr; }
+      .book-grid { grid-template-columns: repeat(3,1fr); gap: 10px; }
+      .topbar { padding: 0 14px; }
+      .bk-hero { flex-direction: column; align-items: center; text-align: center; }
+      .bk-cover-wrap { width: 130px; }
+      .modal-cover { width: 130px; height: 195px; }
+      .pt-auth-left { display: none; }
+      .pt-auth-card { max-width: 440px; }
+      .pt-auth-right { padding: 32px 24px; }
+      .pt-field-row { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 480px) {
+      .book-grid { grid-template-columns: repeat(2,1fr); }
+      .form-grid { grid-template-columns: 1fr; }
+      .profile-header { flex-direction: column; text-align: center; }
+      .profile-meta { justify-content: center; }
     }
   </style>
   {% block extra_head %}{% endblock %}
@@ -264,75 +485,64 @@
 <body>
   {% if user.is_authenticated %}
     <h2 class="sr-only">PageTurner — book tracking and social reading</h2>
-    
     <div class="app">
-      
-      <!-- Unified Sticky Vertical Navigation Sidebar -->
+
       <aside class="sidebar" aria-label="Main Navigation">
         <a href="{% url 'books:home' %}" class="logo">
-          <i class="ti ti-book-open-text"></i> Page<span>Turner</span>
+          <i class="ti ti-book-open-text"></i><span> Page<span style="color:#a78bfa">Turner</span></span>
         </a>
-        
         <div class="sidebar-section">
           <div class="sidebar-label">Menu</div>
-          <a class="sidebar-item {% if active_page == 'home' %}active{% endif %}" href="{% url 'books:home' %}"><i class="ti ti-home"></i>Home</a>
-          <a class="sidebar-item {% if active_page == 'shelves' %}active{% endif %}" href="{% url 'books:shelves' %}"><i class="ti ti-books"></i>My Shelves</a>
-          <a class="sidebar-item {% if active_page == 'discover' %}active{% endif %}" href="{% url 'books:discover' %}"><i class="ti ti-compass"></i>Discover</a>
-          <a class="sidebar-item {% if active_page == 'challenge' %}active{% endif %}" href="{% url 'books:challenge' %}"><i class="ti ti-trophy"></i>Challenge</a>
-          <a class="sidebar-item {% if active_page == 'stats' %}active{% endif %}" href="{% url 'books:stats' %}"><i class="ti ti-chart-bar"></i>Stats</a>
+          <a class="sidebar-item {% if active_page == 'home' %}active{% endif %}" href="{% url 'books:home' %}"><i class="ti ti-home"></i><span>Home</span></a>
+          <a class="sidebar-item {% if active_page == 'shelves' %}active{% endif %}" href="{% url 'books:shelves' %}"><i class="ti ti-books"></i><span>My Shelves</span></a>
+          <a class="sidebar-item {% if active_page == 'discover' %}active{% endif %}" href="{% url 'books:discover' %}"><i class="ti ti-compass"></i><span>Discover</span></a>
+          <a class="sidebar-item {% if active_page == 'challenge' %}active{% endif %}" href="{% url 'books:challenge' %}"><i class="ti ti-trophy"></i><span>Challenge</span></a>
+          <a class="sidebar-item {% if active_page == 'stats' %}active{% endif %}" href="{% url 'books:stats' %}"><i class="ti ti-chart-bar"></i><span>Stats</span></a>
         </div>
-        
         <div class="sidebar-section">
           <div class="sidebar-label">Social</div>
-          <a class="sidebar-item {% if active_page == 'feed' %}active{% endif %}" href="{% url 'books:feed' %}"><i class="ti ti-rss"></i>Activity</a>
-          <a class="sidebar-item {% if active_page == 'friends' %}active{% endif %}" href="{% url 'books:friends' %}"><i class="ti ti-users"></i>Friends</a>
-          <a class="sidebar-item {% if active_page == 'buddy' %}active{% endif %}" href="{% url 'books:buddy_reads' %}"><i class="ti ti-book-2"></i>Buddy Reads</a>
+          <a class="sidebar-item {% if active_page == 'feed' %}active{% endif %}" href="{% url 'books:feed' %}"><i class="ti ti-rss"></i><span>Activity</span></a>
+          <a class="sidebar-item {% if active_page == 'friends' %}active{% endif %}" href="{% url 'books:friends' %}"><i class="ti ti-users"></i><span>Friends</span></a>
+          <a class="sidebar-item {% if active_page == 'buddy' %}active{% endif %}" href="{% url 'books:buddy_reads' %}"><i class="ti ti-book-2"></i><span>Buddy Reads</span></a>
           <a class="sidebar-item {% if active_page == 'notifications' %}active{% endif %}" id="sb-notifications" href="{% url 'books:notifications' %}">
-            <i class="ti ti-bell"></i>Alerts
+            <i class="ti ti-bell"></i><span>Alerts</span>
             {% if unread_notif_count %}<span class="badge">{{ unread_notif_count }}</span>{% endif %}
           </a>
         </div>
-        
         <div class="sidebar-section">
           <div class="sidebar-label">Shelves</div>
-          <a class="sidebar-item" href="{% url 'books:shelves' %}?shelf=reading"><i class="ti ti-book-open"></i>Reading</a>
-          <a class="sidebar-item" href="{% url 'books:shelves' %}?shelf=read"><i class="ti ti-check"></i>Read</a>
-          <a class="sidebar-item" href="{% url 'books:shelves' %}?shelf=want"><i class="ti ti-bookmark"></i>Want to Read</a>
-          <a class="sidebar-item" href="{% url 'books:shelves' %}?shelf=favorites"><i class="ti ti-heart"></i>Favorites</a>
+          <a class="sidebar-item" href="{% url 'books:shelves' %}?shelf=reading"><i class="ti ti-book-open"></i><span>Reading</span></a>
+          <a class="sidebar-item" href="{% url 'books:shelves' %}?shelf=read"><i class="ti ti-check"></i><span>Read</span></a>
+          <a class="sidebar-item" href="{% url 'books:shelves' %}?shelf=want"><i class="ti ti-bookmark"></i><span>Want to Read</span></a>
+          <a class="sidebar-item" href="{% url 'books:shelves' %}?shelf=favorites"><i class="ti ti-heart"></i><span>Favorites</span></a>
         </div>
       </aside>
 
-      <!-- Main Workspace Panel -->
       <div class="main">
-        
-        <!-- Top Application Navigation Bar -->
         <header class="topbar">
           <div class="search-bar">
-            <i class="ti ti-search" aria-hidden="true"></i>
+            <i class="ti ti-search"></i>
             <input type="text" placeholder="Search books, authors..." id="searchInput" value="{{ query|default:'' }}" autocomplete="off">
           </div>
-          
-          <div class="topbar-actions">
-            <nav class="nav-links" aria-label="Primary">
+          <div style="display:flex;align-items:center;gap:8px;margin-left:auto;">
+            <nav class="nav-links">
               <a class="nav-btn {% if active_page == 'discover' %}active{% endif %}" href="{% url 'books:discover' %}">
-                <i class="ti ti-compass" aria-hidden="true"></i><span>Discover</span>
+                <i class="ti ti-compass"></i><span>Discover</span>
               </a>
               <a class="nav-btn {% if active_page == 'notifications' %}active{% endif %}" href="{% url 'books:notifications' %}" aria-label="Notifications">
-                <i class="ti ti-bell" aria-hidden="true"></i>
+                <i class="ti ti-bell"></i>
                 {% if unread_notif_count %}<span class="notif-dot"></span>{% endif %}
               </a>
               <a class="nav-btn" href="{% url 'accounts:logout' %}" aria-label="Sign out" title="Sign out">
-                <i class="ti ti-logout" aria-hidden="true"></i>
+                <i class="ti ti-logout"></i>
               </a>
             </nav>
-
-            <!-- User Context Profile Component -->
             <a class="user-profile-wrapper" href="{% url 'books:profile' %}">
               <span class="user-profile-name">{{ user.username }}</span>
               {% if user_profile.picture %}
                 <div class="avatar" style="background-image:url('{{ user_profile.picture.url }}')"></div>
               {% else %}
-                <div class="avatar" style="background: linear-gradient(135deg, {{ user_profile.avatar_color_a|default:'#3d42df' }}, {{ user_profile.avatar_color_b|default:'#6c5ce7' }})">
+                <div class="avatar" style="background:linear-gradient(135deg,{{ user_profile.avatar_color_a|default:'#6323a6' }},{{ user_profile.avatar_color_b|default:'#a78bfa' }})">
                   {{ user_profile.initials|default:'U' }}
                 </div>
               {% endif %}
@@ -340,7 +550,6 @@
           </div>
         </header>
 
-        <!-- Page Main Body -->
         <main class="content">
           {% if user.is_authenticated and user.profile and not user.profile.is_email_verified %}
             <div class="verify-banner">
@@ -348,113 +557,123 @@
               <span>Your email isn't verified yet. <a href="{% url 'accounts:resend_verification' %}">Resend verification link</a>.</span>
             </div>
           {% endif %}
-          
           {% if messages %}
-          <ul class="message-list" style="list-style: none; padding: 0; margin-bottom: 20px;">
-            {% for m in messages %}
-              <li class="message {{ m.tags }}" style="background: #eef2ff; border: 1px solid var(--border-color); padding: 12px 16px; border-radius: 12px; display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--accent-blue);">
-                <i class="ti ti-info-circle"></i><span>{{ m }}</span>
-              </li>
-            {% endfor %}
-          </ul>
+            <ul class="message-list">
+              {% for m in messages %}
+                <li class="message {{ m.tags }}"><i class="ti ti-info-circle"></i><span>{{ m }}</span></li>
+              {% endfor %}
+            </ul>
           {% endif %}
-
           {% block content %}{% endblock %}
         </main>
       </div>
     </div>
 
-    <!-- Modals and Overlays remain fully operational here -->
+    <!-- Book Modal -->
     <div class="modal-overlay" id="bookModal" onclick="closeModal(event)" style="display:none">
-  <div class="modal modal-wide">
-    <div class="modal-head">
-      <span class="modal-title" id="modalTitle"></span>
-      <button onclick="closeModal()" style="background:none;border:none;cursor:pointer;font-size:22px;color:#888;">&times;</button>
-    </div>
-    <div class="modal-body">
-      <div class="bk-hero">
-        <div class="bk-cover-wrap">
-          <div class="modal-cover" id="modalCover"></div>
-          <div class="bk-cover-actions">
-            <button class="bk-want-btn" id="modalQuickWant" onclick="quickShelf('want')">
-              <i class="ti ti-bookmark"></i><span>Want to Read</span>
-            </button>
-          </div>
+      <div class="modal modal-wide">
+        <div class="modal-head">
+          <span class="modal-title" id="modalTitle"></span>
+          <button onclick="closeModal()" style="background:none;border:none;cursor:pointer;font-size:24px;color:#796a91;line-height:1;">&times;</button>
         </div>
-        <div class="bk-meta">
-          <div class="bk-title" id="modalBookTitle"></div>
-          <div class="bk-author" id="modalBookAuthor"></div>
-          <div class="bk-rating-row">
-            <div class="bk-stars" id="modalStars"></div>
-            <span class="bk-rating-num" id="modalRatingNum"></span>
-            <span class="bk-rating-meta" id="modalRatingMeta"></span>
+        <div class="modal-body">
+          <div class="bk-hero">
+            <div class="bk-cover-wrap">
+              <div class="modal-cover" id="modalCover"></div>
+              <button class="bk-want-btn" id="modalQuickWant" onclick="quickShelf('want')">
+                <i class="ti ti-bookmark"></i><span>Want to Read</span>
+              </button>
+            </div>
+            <div class="bk-meta">
+              <div class="bk-title" id="modalBookTitle"></div>
+              <div class="bk-author" id="modalBookAuthor"></div>
+              <div class="bk-rating-row">
+                <div class="bk-stars" id="modalStars"></div>
+                <span class="bk-rating-num" id="modalRatingNum"></span>
+                <span class="bk-rating-meta" id="modalRatingMeta"></span>
+              </div>
+              <div class="bk-genres" id="modalGenres"></div>
+              <div class="bk-desc-wrap">
+                <div class="bk-desc" id="modalDesc"></div>
+                <button class="bk-show-more" id="modalShowMore" onclick="toggleDesc()" style="display:none">Show more <i class="ti ti-chevron-down"></i></button>
+              </div>
+              <div class="bk-stats" id="modalShelfStats"></div>
+            </div>
           </div>
-          <div class="bk-genres" id="modalGenres"></div>
-          <div class="bk-desc-wrap">
-            <div class="bk-desc" id="modalDesc"></div>
-            <button class="bk-show-more" id="modalShowMore" onclick="toggleDesc()" style="display:none">Show more <i class="ti ti-chevron-down"></i></button>
-          </div>
-          <div class="bk-stats" id="modalShelfStats"></div>
-        </div>
-      </div>
 
-      <!-- My Review -->
-      <div class="bk-section bk-my-review">
-        <div class="bk-section-head">My Review</div>
-        <div class="shelf-select">
-          <span class="shelf-badge" data-shelf="Reading">Reading</span>
-          <span class="shelf-badge" data-shelf="Read">Read</span>
-          <span class="shelf-badge" data-shelf="Want to Read">Want to Read</span>
-          <span class="shelf-badge" data-shelf="Favorites">Favorites</span>
-        </div>
-        <div class="star-rating" id="modalStarRating"></div>
-        <div class="review-form">
-          <div class="field-label">Review</div>
-          <textarea id="reviewText" placeholder="Write your thoughts..." rows="3"></textarea>
-        </div>
-        <div style="margin-top:12px;display:flex;gap:10px;">
-          <button class="btn-primary" onclick="saveBook()"><i class="ti ti-device-floppy"></i> Save</button>
-          <button class="btn-secondary" onclick="closeModal()">Cancel</button>
-        </div>
-      </div>
+          <div class="bk-section bk-my-review">
+            <div class="bk-section-head">My Review</div>
+            <div class="shelf-select">
+              <span class="shelf-badge" data-shelf="Reading">Reading</span>
+              <span class="shelf-badge" data-shelf="Read">Read</span>
+              <span class="shelf-badge" data-shelf="Want to Read">Want to Read</span>
+              <span class="shelf-badge" data-shelf="Favorites">Favorites</span>
+            </div>
+            <div class="star-rating" id="modalStarRating"></div>
+            <div class="review-form">
+              <div class="field-label">Review</div>
+              <textarea id="reviewText" placeholder="Write your thoughts..." rows="3"></textarea>
+            </div>
+            <div style="margin-top:12px;display:flex;gap:10px;">
+              <button class="btn-primary" onclick="saveBook()"><i class="ti ti-device-floppy"></i> Save</button>
+              <button class="btn-secondary" onclick="closeModal()">Cancel</button>
+            </div>
+          </div>
 
-      <!-- About the Author -->
-      <div class="bk-section" id="modalAuthorSection" style="display:none">
-        <div class="bk-section-head">About the Author</div>
-        <div class="bk-author-card">
-          <div class="bk-author-avatar" id="modalAuthorAvatar"></div>
-          <div>
-            <div class="bk-author-name" id="modalAuthorName"></div>
-            <div class="bk-author-stat" id="modalAuthorStat"></div>
+          <div class="bk-section" id="modalAuthorSection" style="display:none">
+            <div class="bk-section-head">About the Author</div>
+            <div class="bk-author-card">
+              <div class="bk-author-avatar" id="modalAuthorAvatar"></div>
+              <div>
+                <div class="bk-author-name" id="modalAuthorName"></div>
+                <div class="bk-author-stat" id="modalAuthorStat"></div>
+              </div>
+            </div>
+            <div class="bk-author-books" id="modalAuthorBooks"></div>
+          </div>
+
+          <div class="bk-section">
+            <div class="bk-section-head">Community Reviews</div>
+            <div class="bk-breakdown">
+              <div class="bk-bd-summary">
+                <div class="bk-bd-avg" id="modalBdAvg"></div>
+                <div class="bk-stars" id="modalBdStars"></div>
+                <div class="bk-bd-count" id="modalBdCount"></div>
+              </div>
+              <div class="bk-bd-bars" id="modalBdBars"></div>
+            </div>
+            <div class="bk-reviews-list" id="modalReviewsList"></div>
           </div>
         </div>
-        <div class="bk-author-books" id="modalAuthorBooks"></div>
-      </div>
-
-      <!-- Community Reviews -->
-      <div class="bk-section">
-        <div class="bk-section-head">Community Reviews</div>
-        <div class="bk-breakdown">
-          <div class="bk-bd-summary">
-            <div class="bk-bd-avg" id="modalBdAvg"></div>
-            <div class="bk-stars" id="modalBdStars"></div>
-            <div class="bk-bd-count" id="modalBdCount"></div>
-          </div>
-          <div class="bk-bd-bars" id="modalBdBars"></div>
-        </div>
-        <div class="bk-reviews-list" id="modalReviewsList"></div>
       </div>
     </div>
-  </div>
-</div>
-    <div class="toast" id="toast"><i class="ti ti-check"></i><span id="toastMsg"></span></div>
+
+    <!-- Author Modal -->
     <div class="modal-overlay" id="authorModal" onclick="closeAuthorModal(event)" style="display:none">
-      <!-- (Keep existing code body for authorModal untouched) -->
+      <div class="modal">
+        <div class="modal-head">
+          <span class="modal-title" id="authorModalName"></span>
+          <button onclick="closeAuthorModal()" style="background:none;border:none;cursor:pointer;font-size:24px;color:#796a91;line-height:1;">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div style="display:flex;gap:16px;margin-bottom:16px;">
+            <div class="author-photo" id="authorModalPhoto"></div>
+            <div style="flex:1;min-width:0;">
+              <div style="font-size:20px;font-weight:800;color:#1f1135;margin-bottom:4px;" id="authorModalNameLg"></div>
+              <div style="font-size:13px;color:#796a91;margin-bottom:8px;" id="authorModalStats"></div>
+              <div style="font-size:13px;color:#3d2d52;line-height:1.6;" id="authorModalBio"></div>
+            </div>
+          </div>
+          <div id="authorModalBooks"></div>
+        </div>
+      </div>
     </div>
 
+    <div class="toast" id="toast"><i class="ti ti-check"></i><span id="toastMsg"></span></div>
     {% csrf_token %}
     <script src="{% static 'js/app.js' %}"></script>
     {% block extra_js %}{% endblock %}
+
   {% else %}
     {% block auth_content %}{% endblock %}
   {% endif %}
