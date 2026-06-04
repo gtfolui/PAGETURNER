@@ -1,0 +1,26 @@
+{% load static %}
+{# Renders a book card. Variables: book (Book), optional 'extra' #}
+<div class="book-card" onclick="openBook({{ book.id }})" role="button" tabindex="0">
+  <div class="book-cover" style="background:{{ book.cover_bg }};color:{{ book.cover_color }}">
+    {% if book.cover_url %}
+      <img src="{{ book.cover_url }}" alt="{{ book.title|escape }}" loading="lazy"
+           style="width:100%;height:100%;object-fit:cover;border-radius:inherit">
+    {% else %}
+      {{ book.title }}
+    {% endif %}
+  </div>
+  <div class="book-title-sm">{{ book.title }}</div>
+  <div class="book-author-sm">{{ book.author }}</div>
+  <div class="stars-sm" aria-label="{{ book.avg_rating }} out of 5">
+    {% with full=book.avg_rating|floatformat:0|add:0 %}
+      {% for i in "12345" %}
+        {% if forloop.counter <= full %}
+          <i class="ti ti-star-filled star-icon"></i>
+        {% else %}
+          <i class="ti ti-star star-icon empty"></i>
+        {% endif %}
+      {% endfor %}
+    {% endwith %}
+  </div>
+</div>
+

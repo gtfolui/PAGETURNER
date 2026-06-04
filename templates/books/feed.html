@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}Activity · PageTurner{% endblock %}
+
+{% block content %}
+<div class="page-title">Activity Feed</div>
+<div class="page-sub">See what your friends are reading.</div>
+
+<div class="feed">
+  {% for activity in activities %}
+    {% include "books/_feed_card.html" %}
+  {% empty %}
+    <div class="empty-state">
+      <i class="ti ti-rss"></i>
+      <h3>No activity yet</h3>
+      <p><a href="{% url 'books:friends' %}" style="color:var(--pt-gold)">Follow some readers</a> to start seeing their activity here.</p>
+    </div>
+  {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% load static humanize %}
+
+{% block title %}Home · PageTurner{% endblock %}
+
+{% block content %}
+<div class="page-title">{% now "g" as h %}{% if h < "12" %}Good morning{% elif h < "18" %}Good afternoon{% else %}Good evening{% endif %}, {{ user.first_name|default:user.username }}</div>
+<div class="page-sub">Continue where you left off, or find your next great read.</div>
+
+<div class="challenge-card" style="background:linear-gradient(135deg,var(--color-background-primary),var(--pt-mist))">
+  <div style="display:flex;align-items:center;gap:18px">
+    <div class="challenge-ring" style="width:76px;height:76px;flex-shrink:0;margin:0">
+      <svg class="ring-svg" width="76" height="76" viewBox="0 0 76 76">
+        <circle class="ring-track" cx="38" cy="38" r="30"/>
+        {% with circ=188.4 %}
+        <circle class="ring-fill" cx="38" cy="38" r="30"
+                stroke-dasharray="{{ circ }}"
+                stroke-dashoffset="{% widthratio challenge_pct 100 circ as off %}{{ circ|add:0|stringformat:'f' }}"
+                style="stroke-dashoffset:{% widthratio challenge_pct 100 circ %}px"/>
+        {% endwith %}
+      </svg>
+      <div class="ring-text">
+        <span class="ring-num" style="font-size:19px">{{ challenge_read }}</span>
+        <span class="ring-total">of {{ challenge.goal }}</span>
+      </div>
+    </div>
+    <div style="flex:1">
+      <div style="font-family:'Playfair Display',serif;font-size:17px;margin-bottom:3px">{% now "Y" %} Reading Challenge</div>
+      <div style="font-size:13px;color:var(--color-text-secondary)">
+        {% if challenge_left %}{{ challenge_left }} book{{ challenge_left|pluralize }} to go — you're {{ challenge_pct }}% there!{% else %}You hit your goal! 🎉{% endif %}
+      </div>
+      <div style="margin-top:8px;height:6px;background:var(--color-background-secondary);border-radius:3px;overflow:hidden">
+        <div style="height:100%;width:{{ challenge_pct }}%;background:var(--pt-gold);border-radius:3px"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div style="margin-top:20px">
+  <div class="section-head">
+    <span class="section-title">Currently Reading</span>
+    <a class="see-all" href="{% url 'books:shelves' %}?shelf=reading">see all</a>
+  </div>
+  {% if currently_reading %}
+    <div style="display:flex;gap:12px;overflow-x:auto;padding-bottom:6px">
+      {% for ub in currently_reading %}
+        <div style="flex-shrink:0;width:140px;background:var(--color-background-primary);border:1px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:11px;cursor:pointer;box-shadow:var(--shadow-sm)" onclick="openBook({{ ub.book.id }})">
+          <div style="display:flex;gap:9px;align-items:center">
+            <div style="width:34px;height:48px;border-radius:3px;background:{{ ub.book.cover_bg }};color:{{ ub.book.cover_color }};display:flex;align-items:center;justify-content:center;font-size:7px;text-align:center;padding:3px;flex-shrink:0;overflow:hidden">{{ ub.book.title }}</div>
+            <div style="min-width:0">
+              <div style="font-size:12px;font-weight:500;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">{{ ub.book.title }}</div>
+              <div style="font-size:10px;color:var(--color-text-secondary);margin-top:2px">{{ ub.book.author }}</div>
+            </div>
+          </div>
+          <div class="progress-bar" style="margin-top:9px"><div class="progress-fill" style="width:{{ ub.progress }}%"></div></div>
+          <div style="font-size:10px;color:var(--color-text-secondary);margin-top:4px">{{ ub.progress }}% · p.{{ ub.current_page }}</div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="empty-state" style="padding:24px">
+      <p>You're not reading anything yet. <a href="{% url 'books:discover' %}" style="color:var(--pt-gold)">Find a book to start</a>.</p>
+    </div>
+  {% endif %}
+</div>
+
+<div style="margin-top:24px">
+  <div class="section-head">
+    <span class="section-title">Recommended for you</span>
+    <a class="see-all" href="{% url 'books:discover' %}">see all</a>
+  </div>
+  <div class="book-grid">
+    {% for book in recommendations %}
+      {% include "books/_book_card.html" %}
+    {% empty %}
+      <p style="color:var(--color-text-secondary);font-size:13px">No recommendations yet — add a book to your shelves!</p>
+    {% endfor %}
+  </div>
+</div>
+
+<div style="margin-top:24px">
+  <div class="section-head">
+    <span class="section-title">Friends' activity</span>
+    <a class="see-all" href="{% url 'books:feed' %}">see all</a>
+  </div>
+  <div class="feed">
+    {% for activity in home_feed %}
+      {% include "books/_feed_card.html" %}
+    {% empty %}
+      <p style="color:var(--color-text-secondary);font-size:13px">No activity yet. <a href="{% url 'books:friends' %}" style="color:var(--pt-gold)">Follow some readers</a> to populate your feed.</p>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

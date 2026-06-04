@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% load static humanize %}
+
+{% block title %}Reading Challenge · PageTurner{% endblock %}
+
+{% block content %}
+<div class="page-title">Reading Challenge</div>
+<div class="page-sub">Set your goal for {{ challenge.year }} and track your progress.</div>
+
+<div class="challenge-card">
+  <div class="challenge-header">
+    <div class="challenge-title">{{ challenge.year }} Reading Challenge</div>
+    <div class="challenge-year">{{ challenge.year }}</div>
+  </div>
+  <div class="challenge-ring">
+    <svg class="ring-svg" width="110" height="110" viewBox="0 0 100 100">
+      <circle class="ring-track" cx="50" cy="50" r="42"/>
+      {% widthratio challenge_pct 100 263.9 as offset %}
+      <circle class="ring-fill" id="challengeRing" cx="50" cy="50" r="42"
+              stroke-dasharray="263.9"
+              style="stroke-dashoffset:{{ offset }}px"/>
+    </svg>
+    <div class="ring-text">
+      <span class="ring-num" id="chRead">{{ challenge_read }}</span>
+      <span class="ring-total" id="chGoal">of {{ challenge.goal }}</span>
+    </div>
+  </div>
+  <div class="challenge-stats">
+    <div><div class="ch-stat-val" id="chPct">{{ challenge_pct }}%</div><div class="ch-stat-label">complete</div></div>
+    <div><div class="ch-stat-val" id="chLeft">{{ challenge_left }}</div><div class="ch-stat-label">books left</div></div>
+    <div><div class="ch-stat-val" id="chPages">{{ challenge_pages|intcomma }}</div><div class="ch-stat-label">pages read</div></div>
+  </div>
+  <div style="margin-top:18px;padding-top:18px;border-top:1px solid var(--color-border-tertiary)">
+    <div style="font-size:13px;font-weight:500;margin-bottom:10px">Adjust your goal</div>
+    <div style="display:flex;align-items:center;gap:14px">
+      <input type="range" min="1" max="100" value="{{ challenge.goal }}" step="1" id="goalSlider"
+             oninput="updateGoal(this.value)" style="flex:1">
+      <span style="font-size:14px;font-weight:500;min-width:60px" id="goalDisplay">{{ challenge.goal }} books</span>
+    </div>
+  </div>
+</div>
+
+<div class="section-head" style="margin-top:24px">
+  <span class="section-title">Books read this year</span>
+</div>
+<div class="book-grid">
+  {% for ub in year_books %}
+    {% with book=ub.book %}{% include "books/_book_card.html" %}{% endwith %}
+  {% empty %}
+    <p style="color:var(--color-text-secondary);font-size:13px;grid-column:1/-1">No books read this year yet. Move some books to your "Read" shelf to see them here.</p>
+  {% endfor %}
+</div>
+{% endblock %}

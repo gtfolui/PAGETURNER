@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}My Shelves · PageTurner{% endblock %}
+
+{% block content %}
+<div class="page-title">My Shelves</div>
+<div class="page-sub">Organize and track your reading journey.</div>
+
+<div class="shelf-tabs" role="tablist">
+  <a class="shelf-tab {% if current_shelf == 'reading' %}active{% endif %}" href="?shelf=reading">Reading ({{ counts.reading }})</a>
+  <a class="shelf-tab {% if current_shelf == 'read' %}active{% endif %}" href="?shelf=read">Read ({{ counts.read }})</a>
+  <a class="shelf-tab {% if current_shelf == 'want' %}active{% endif %}" href="?shelf=want">Want to Read ({{ counts.want }})</a>
+  <a class="shelf-tab {% if current_shelf == 'favorites' %}active{% endif %}" href="?shelf=favorites">Favorites ({{ counts.favorites }})</a>
+</div>
+
+<div class="shelf-list">
+  {% for ub in items %}
+    <div class="shelf-item" onclick="openBook({{ ub.book.id }})">
+      <div class="shelf-cover" style="background:{{ ub.book.cover_bg }};color:{{ ub.book.cover_color }}">{{ ub.book.title }}</div>
+      <div class="shelf-info">
+        <div class="shelf-book-title">{{ ub.book.title }}</div>
+        <div class="shelf-book-author">{{ ub.book.author }}</div>
+        {% if ub.shelf == "reading" %}
+          <div class="shelf-progress">
+            <div class="progress-text">{{ ub.progress }}% complete (p.{{ ub.current_page }} of {{ ub.book.pages }})</div>
+            <div class="progress-bar"><div class="progress-fill" style="width:{{ ub.progress }}%"></div></div>
+          </div>
+        {% endif %}
+        {% if ub.rating %}
+          <div style="display:flex;gap:2px;margin-top:5px">
+            {% for i in "12345" %}
+              {% if forloop.counter <= ub.rating %}<i class="ti ti-star-filled star-icon"></i>{% else %}<i class="ti ti-star star-icon empty"></i>{% endif %}
+            {% endfor %}
+          </div>
+        {% endif %}
+      </div>
+      <div class="shelf-actions">
+        <button class="icon-btn" title="Edit" onclick="event.stopPropagation();openBook({{ ub.book.id }})"><i class="ti ti-edit"></i></button>
+        <form method="post" action="{% url 'books:remove_from_shelf' ub.id %}" style="display:inline" onclick="event.stopPropagation()" onsubmit="return confirm('Remove this book from your shelf?')">
+          {% csrf_token %}
+          <button class="icon-btn" title="Remove" type="submit"><i class="ti ti-trash"></i></button>
+        </form>
+      </div>
+    </div>
+  {% empty %}
+    <div class="empty-state">
+      <i class="ti ti-books"></i>
+      <h3>No books on this shelf yet</h3>
+      <p>Head to <a href="{% url 'books:discover' %}" style="color:var(--pt-gold)">Discover</a> to add books.</p>
+    </div>
+  {% endfor %}
+</div>
+{% endblock %}

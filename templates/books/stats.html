@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% load static humanize %}
+
+{% block title %}Statistics · PageTurner{% endblock %}
+
+{% block content %}
+<div class="page-title">Reading Statistics</div>
+<div class="page-sub">Your reading journey at a glance.</div>
+
+<div class="stats-grid">
+  <div class="stat-card">
+    <div class="stat-val">{{ total_books }}</div>
+    <div class="stat-label">Total books read</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-val">{{ total_pages|intcomma }}</div>
+    <div class="stat-label">Pages read</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-val">{{ avg_rating }} <i class="ti ti-star-filled" style="font-size:20px;color:var(--pt-gold)"></i></div>
+    <div class="stat-label">Avg rating given</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-val">{{ reviews_written }}</div>
+    <div class="stat-label">Reviews written</div>
+  </div>
+</div>
+
+<div class="challenge-card">
+  <div class="section-title" style="margin-bottom:16px">Top genres</div>
+  {% for g in top_genres %}
+    <div class="genre-bar">
+      <div class="genre-header"><span class="genre-name">{{ g.name }}</span><span class="genre-count">{{ g.count }} book{{ g.count|pluralize }}</span></div>
+      <div class="genre-track"><div class="genre-fill" style="width:{{ g.pct }}%;background:{{ g.color }}"></div></div>
+    </div>
+  {% empty %}
+    <p style="color:var(--color-text-secondary);font-size:13px">No data yet. Read some books to see your genre breakdown.</p>
+  {% endfor %}
+</div>
+
+<div class="challenge-card" style="margin-top:14px">
+  <div class="section-title" style="margin-bottom:16px">Books read by year</div>
+  <div style="display:flex;align-items:flex-end;gap:10px;height:120px">
+    {% for y in year_data %}
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;height:100%;justify-content:flex-end">
+        <div style="font-size:11px;color:var(--color-text-secondary)">{{ y.count }}</div>
+        <div style="width:100%;background:var(--pt-gold);border-radius:3px 3px 0 0;height:{{ y.height_pct }}%;min-height:2px;transition:height .4s"></div>
+        <div style="font-size:11px;color:var(--color-text-secondary)">{{ y.year }}</div>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

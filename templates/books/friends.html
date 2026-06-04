@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block title %}Friends · PageTurner{% endblock %}
+
+{% block content %}
+<div class="page-title">Friends</div>
+<div class="page-sub">Connect with fellow readers.</div>
+
+{% if incoming_requests %}
+  <div class="section-title" style="margin-top:8px">Pending requests</div>
+  <div class="incoming-requests">
+    {% for fr in incoming_requests %}
+      <div class="request-card" id="req-{{ fr.id }}">
+        <div class="friend-avatar"
+             style="background:linear-gradient(135deg,{{ fr.sender.profile.avatar_color_a }},{{ fr.sender.profile.avatar_color_b }})">
+          {{ fr.sender.profile.initials }}
+        </div>
+        <div style="flex:1;min-width:0">
+          <div class="friend-name">{{ fr.sender.profile.display_name }}</div>
+          <div class="friend-stat">wants to be friends</div>
+        </div>
+        <div class="request-actions">
+          <button class="btn-primary" onclick="respondRequest({{ fr.id }}, 'accept')">Accept</button>
+          <button class="btn-secondary" onclick="respondRequest({{ fr.id }}, 'decline')">Decline</button>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+{% endif %}
+
+<div class="section-title" style="margin-top:24px">Readers you may know</div>
+<div class="friends-grid">
+  {% for p in people %}
+    <div class="friend-card">
+      <a href="{% url 'books:profile_user' p.user.username %}" style="display:block;text-decoration:none;color:inherit">
+        <div class="friend-avatar" style="background:linear-gradient(135deg,{{ p.user.profile.avatar_color_a|default:'#C4922A' }},{{ p.user.profile.avatar_color_b|default:'#8B3E2A' }})">
+          {{ p.user.profile.initials|default:'U' }}
+        </div>
+        <div class="friend-name">{{ p.user.profile.display_name|default:p.user.username }}</div>
+        <div class="friend-stat">{{ p.books_read }} book{{ p.books_read|pluralize }} read</div>
+        <div class="friend-stat" style="margin-top:2px">{% if p.currently %}Reading: {{ p.currently.title|truncatechars:22 }}{% else %}Not reading yet{% endif %}</div>
+      </a>
+      {% if p.is_friend %}
+        <button class="friend-btn following" onclick="unfriendUser(this, {{ p.user.id }})">Friends</button>
+      {% elif p.is_pending %}
+        <button class="friend-btn following" disabled>Request sent</button>
+      {% else %}
+        <button class="friend-btn" onclick="addFriend(this, {{ p.user.id }})">Add friend</button>
+      {% endif %}
+    </div>
+  {% empty %}
+    <div class="empty-state" style="grid-column:1/-1">
+      <i class="ti ti-users"></i>
+      <h3>No other readers yet</h3>
+      <p>Invite friends to PageTurner!</p>
+    </div>
+  {% endfor %}
+</div>
+{% endblock %}

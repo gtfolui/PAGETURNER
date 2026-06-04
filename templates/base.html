@@ -1,0 +1,236 @@
+{% load static %}<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>{% block title %}PageTurner{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+  {% if user.is_authenticated %}
+    <h2 class="sr-only">PageTurner — book tracking and social reading</h2>
+    <div class="app">
+      <header class="topbar">
+        <a href="{% url 'books:home' %}" class="logo">Page<span>Turner</span></a>
+        <div class="search-bar">
+          <i class="ti ti-search" aria-hidden="true"></i>
+          <input type="text" placeholder="Search books, authors..." id="searchInput"
+                 value="{{ query|default:'' }}" autocomplete="off">
+        </div>
+        <nav class="nav-links" aria-label="Primary">
+          <a class="nav-btn {% if active_page == 'discover' %}active{% endif %}" href="{% url 'books:discover' %}">
+            <i class="ti ti-compass" aria-hidden="true"></i><span>Discover</span>
+          </a>
+          <a class="nav-btn {% if active_page == 'notifications' %}active{% endif %}" href="{% url 'books:notifications' %}" aria-label="Notifications">
+            <i class="ti ti-bell" aria-hidden="true"></i>
+            {% if unread_notif_count %}<span class="notif-dot">{{ unread_notif_count }}</span>{% endif %}
+          </a>
+          <a class="nav-btn" href="{% url 'accounts:logout' %}" aria-label="Sign out" title="Sign out">
+            <i class="ti ti-logout" aria-hidden="true"></i>
+          </a>
+        </nav>
+        {% if user_profile.picture %}
+          <a class="avatar avatar-img" href="{% url 'books:profile' %}"
+             style="background-image:url('{{ user_profile.picture.url }}')">&nbsp;</a>
+        {% else %}
+          <a class="avatar" href="{% url 'books:profile' %}"
+             style="background:linear-gradient(135deg,{{ user_profile.avatar_color_a|default:'#C4922A' }},{{ user_profile.avatar_color_b|default:'#8B3E2A' }})">
+            {{ user_profile.initials|default:'U' }}
+          </a>
+        {% endif %}
+      </header>
+
+      <div class="main">
+        <aside class="sidebar" aria-label="Secondary navigation">
+          <div class="sidebar-section">
+            <div class="sidebar-label">Menu</div>
+            <a class="sidebar-item {% if active_page == 'home' %}active{% endif %}" href="{% url 'books:home' %}"><i class="ti ti-home"></i>Home</a>
+            <a class="sidebar-item {% if active_page == 'shelves' %}active{% endif %}" href="{% url 'books:shelves' %}"><i class="ti ti-books"></i>My Shelves</a>
+            <a class="sidebar-item {% if active_page == 'discover' %}active{% endif %}" href="{% url 'books:discover' %}"><i class="ti ti-compass"></i>Discover</a>
+            <a class="sidebar-item {% if active_page == 'challenge' %}active{% endif %}" href="{% url 'books:challenge' %}"><i class="ti ti-trophy"></i>Challenge</a>
+            <a class="sidebar-item {% if active_page == 'stats' %}active{% endif %}" href="{% url 'books:stats' %}"><i class="ti ti-chart-bar"></i>Stats</a>
+          </div>
+          <div class="sidebar-section">
+            <div class="sidebar-label">Social</div>
+            <a class="sidebar-item {% if active_page == 'feed' %}active{% endif %}" href="{% url 'books:feed' %}"><i class="ti ti-rss"></i>Activity</a>
+            <a class="sidebar-item {% if active_page == 'friends' %}active{% endif %}" href="{% url 'books:friends' %}"><i class="ti ti-users"></i>Friends</a>
+            <a class="sidebar-item {% if active_page == 'buddy' %}active{% endif %}" href="{% url 'books:buddy_reads' %}"><i class="ti ti-book-2"></i>Buddy Reads</a>
+            <a class="sidebar-item {% if active_page == 'notifications' %}active{% endif %}" id="sb-notifications" href="{% url 'books:notifications' %}">
+              <i class="ti ti-bell"></i>Alerts
+              {% if unread_notif_count %}<span class="badge">{{ unread_notif_count }}</span>{% endif %}
+            </a>
+          </div>
+          <div class="sidebar-section">
+            <div class="sidebar-label">Shelves</div>
+            <a class="sidebar-item" href="{% url 'books:shelves' %}?shelf=reading"><i class="ti ti-book-open"></i>Reading</a>
+            <a class="sidebar-item" href="{% url 'books:shelves' %}?shelf=read"><i class="ti ti-check"></i>Read</a>
+            <a class="sidebar-item" href="{% url 'books:shelves' %}?shelf=want"><i class="ti ti-bookmark"></i>Want to Read</a>
+            <a class="sidebar-item" href="{% url 'books:shelves' %}?shelf=favorites"><i class="ti ti-heart"></i>Favorites</a>
+          </div>
+        </aside>
+
+        <main class="content">
+          {% if user.is_authenticated and user.profile and not user.profile.is_email_verified %}
+            <div class="verify-banner">
+              <i class="ti ti-mail-exclamation"></i>
+              <span>Your email isn't verified yet. <a href="{% url 'accounts:resend_verification' %}">Resend verification link</a>.</span>
+            </div>
+          {% endif %}
+          {% if messages %}
+          <ul class="message-list">
+            {% for m in messages %}
+              <li class="message {{ m.tags }}">
+                <i class="ti ti-info-circle"></i><span>{{ m }}</span>
+              </li>
+            {% endfor %}
+          </ul>
+          {% endif %}
+
+          {% block content %}{% endblock %}
+        </main>
+      </div>
+    </div>
+
+    {# Book modal — shared across all pages #}
+    <div class="modal-overlay" id="bookModal" onclick="closeModal(event)" style="display:none">
+      <div class="modal modal-wide" onclick="event.stopPropagation()">
+        <div class="modal-head">
+          <div class="modal-title" id="modalTitle">Book Details</div>
+          <button class="icon-btn" onclick="closeModal()" aria-label="Close"><i class="ti ti-x"></i></button>
+        </div>
+        <div class="modal-body">
+
+          {# Hero: cover on the left, headline info on the right #}
+          <div class="bk-hero">
+            <div class="bk-cover-wrap">
+              <div class="modal-cover" id="modalCover"></div>
+              <div class="bk-cover-actions">
+                <button class="bk-want-btn" id="modalQuickWant" onclick="quickShelf('want')">
+                  <i class="ti ti-bookmark"></i> <span>Want to Read</span>
+                </button>
+              </div>
+            </div>
+            <div class="bk-meta">
+              <h2 class="bk-title" id="modalBookTitle"></h2>
+              <div class="bk-author" id="modalBookAuthor"></div>
+
+              <div class="bk-rating-row">
+                <div id="modalStars" class="bk-stars"></div>
+                <div class="bk-rating-num" id="modalRatingNum">0.0</div>
+                <div class="bk-rating-meta" id="modalRatingMeta">No ratings yet</div>
+              </div>
+
+              <div class="bk-genres" id="modalGenres"></div>
+
+              <div class="bk-desc-wrap">
+                <div class="bk-desc" id="modalDesc"></div>
+                <button class="bk-show-more" id="modalShowMore" onclick="toggleDesc()" style="display:none">
+                  Show more <i class="ti ti-chevron-down"></i>
+                </button>
+              </div>
+
+              <div class="bk-stats" id="modalShelfStats"></div>
+            </div>
+          </div>
+
+          {# My Review section #}
+          <div class="bk-section">
+            <div class="bk-section-head">My Review</div>
+            <div class="bk-my-review">
+              <div class="field-label">Add to shelf</div>
+              <div class="shelf-select" id="modalShelfSelect">
+                <div class="shelf-badge" data-shelf="Reading">Reading</div>
+                <div class="shelf-badge" data-shelf="Want to Read">Want to Read</div>
+                <div class="shelf-badge" data-shelf="Read">Read</div>
+                <div class="shelf-badge" data-shelf="Favorites">Favorites</div>
+              </div>
+
+              <div class="field-label">Your rating</div>
+              <div class="star-rating" id="modalStarRating"></div>
+
+              <div class="field-label" style="margin-top:10px">Write a review</div>
+              <div class="review-form">
+                <textarea id="reviewText" placeholder="What did you think of this book?"></textarea>
+              </div>
+
+              <div style="display:flex;gap:8px;margin-top:14px;justify-content:flex-end">
+                <button class="btn-secondary" onclick="openBuddyInvite()"><i class="ti ti-users"></i> Buddy read</button>
+                <button class="btn-secondary" onclick="closeModal()">Cancel</button>
+                <button class="btn-primary" onclick="saveBook()">Save</button>
+              </div>
+              <div id="buddyInvitePanel" style="display:none;margin-top:12px;padding:12px;background:var(--color-background-secondary);border-radius:8px">
+                <div class="field-label" style="margin-top:0">Invite a friend to read this together</div>
+                <div id="buddyFriendList" style="display:flex;flex-direction:column;gap:6px"></div>
+              </div>
+            </div>
+          </div>
+
+          {# About the author #}
+          <div class="bk-section" id="modalAuthorSection" style="display:none">
+            <div class="bk-section-head">About the author</div>
+            <div class="bk-author-card">
+              <div class="bk-author-avatar" id="modalAuthorAvatar"></div>
+              <div class="bk-author-info">
+                <div class="bk-author-name" id="modalAuthorName"></div>
+                <div class="bk-author-stat" id="modalAuthorStat"></div>
+              </div>
+            </div>
+            <div class="bk-author-books" id="modalAuthorBooks" style="display:none"></div>
+          </div>
+
+          {# Community Reviews #}
+          <div class="bk-section" id="modalReviewsSection">
+            <div class="bk-section-head">Community Reviews</div>
+
+            <div class="bk-breakdown" id="modalBreakdown">
+              <div class="bk-bd-summary">
+                <div class="bk-bd-avg" id="modalBdAvg">0.0</div>
+                <div id="modalBdStars" class="bk-stars"></div>
+                <div class="bk-bd-count" id="modalBdCount">0 ratings · 0 reviews</div>
+              </div>
+              <div class="bk-bd-bars" id="modalBdBars"></div>
+            </div>
+
+            <div class="bk-reviews-list" id="modalReviewsList">
+              <p class="bk-empty">Be the first to review this book.</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="toast" id="toast"><i class="ti ti-check"></i><span id="toastMsg"></span></div>
+
+    {# Author bio modal #}
+    <div class="modal-overlay" id="authorModal" onclick="closeAuthorModal(event)" style="display:none">
+      <div class="modal" onclick="event.stopPropagation()">
+        <div class="modal-head">
+          <div class="modal-title" id="authorModalName">Author</div>
+          <button class="icon-btn" onclick="closeAuthorModal()" aria-label="Close"><i class="ti ti-x"></i></button>
+        </div>
+        <div class="modal-body">
+          <div style="display:flex;gap:16px;align-items:flex-start;margin-bottom:14px">
+            <div class="author-photo" id="authorModalPhoto"></div>
+            <div style="flex:1;min-width:0">
+              <h2 style="font-family:'Playfair Display',serif;font-size:22px;margin:0;color:var(--color-text-primary)" id="authorModalNameLg"></h2>
+              <div id="authorModalStats" style="font-size:12px;color:var(--color-text-secondary);margin-top:4px"></div>
+            </div>
+          </div>
+          <div id="authorModalBio" style="font-size:14px;line-height:1.6;color:var(--color-text-secondary);white-space:pre-wrap"></div>
+          <div id="authorModalBooks"></div>
+        </div>
+      </div>
+    </div>
+
+    {% csrf_token %}
+    <script src="{% static 'js/app.js' %}"></script>
+    {% block extra_js %}{% endblock %}
+  {% else %}
+    {# Auth pages render their own layout #}
+    {% block auth_content %}{% endblock %}
+  {% endif %}
+</body>
+</html>

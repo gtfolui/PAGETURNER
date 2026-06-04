@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Sign in · PageTurner{% endblock %}
+
+{% block auth_content %}
+<div class="auth-wrap">
+  <div class="auth-card">
+    <div class="auth-logo">Page<span>Turner</span></div>
+    <p class="auth-tag">Track your reading. Share with friends. Find your next book.</p>
+
+    {% if messages %}
+      {% for m in messages %}
+        <div class="auth-error-banner">{{ m }}</div>
+      {% endfor %}
+    {% endif %}
+
+    {% if form.non_field_errors %}
+      <div class="auth-error-banner">{{ form.non_field_errors|join:" " }}</div>
+    {% endif %}
+
+    <form method="post" class="auth-form" novalidate>
+      {% csrf_token %}
+      <div class="form-row">
+        <label for="id_username">Username</label>
+        {{ form.username }}
+        {% if form.username.errors %}<ul class="errorlist">{% for e in form.username.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+      </div>
+      <div class="form-row">
+        <label for="id_password">Password</label>
+        {{ form.password }}
+        {% if form.password.errors %}<ul class="errorlist">{% for e in form.password.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+      </div>
+      <button type="submit" class="btn-primary btn-block" style="margin-top:8px">Sign in</button>
+    </form>
+
+    <div class="auth-foot">
+      New here? <a href="{% url 'accounts:signup' %}">Create an account</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

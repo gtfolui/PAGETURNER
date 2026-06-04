@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Discover · PageTurner{% endblock %}
+
+{% block content %}
+<div class="page-title">Discover</div>
+<div class="page-sub">Find your next favourite book.{% if query %} Results for <em>"{{ query }}"</em>.{% endif %}</div>
+
+<div class="discover-filters">
+  <a class="filter-btn {% if current_genre == 'all' %}active{% endif %}" href="?genre=all{% if query %}&q={{ query }}{% endif %}">All</a>
+  {% for slug, label in genres %}
+    <a class="filter-btn {% if current_genre == slug %}active{% endif %}" href="?genre={{ slug }}{% if query %}&q={{ query }}{% endif %}">{{ label }}</a>
+  {% endfor %}
+</div>
+
+{% if books %}
+  <div class="section-head">
+    <span class="section-title">
+      {% if query %}In your library{% else %}Trending this week{% endif %}
+      <span style="color:var(--color-text-secondary);font-weight:400">· {{ books|length }} book{{ books|length|pluralize }}</span>
+    </span>
+  </div>
+  <div class="book-grid">
+    {% for book in books %}
+      {% include "books/_book_card.html" %}
+    {% endfor %}
+  </div>
+{% endif %}
+
+{% if remote_results %}
+  <div class="section-head" style="margin-top:32px">
+    <span class="section-title">
+      From Google Books
+      <span style="color:var(--color-text-secondary);font-weight:400">· {{ remote_results|length }} result{{ remote_results|length|pluralize }}</span>
+    </span>
+  </div>
+  <p style="color:var(--color-text-secondary);font-size:13px;margin:-4px 0 12px">
+    These are sourced live from the Google Books API. Click one to import it into PageTurner.
+  </p>
+  <div class="book-grid">
+    {% for r in remote_results %}
+      <div class="book-card remote-card" onclick="importAndOpen('{{ r.external_id|escapejs }}', '{{ r.source|escapejs }}')">
+        <div class="book-cover" style="background:{{ r.cover_bg }}">
+          {% if r.cover_url %}
+            <img src="{{ r.cover_url }}" alt="{{ r.title|escape }}" style="width:100%;height:100%;object-fit:cover;border-radius:inherit">
+          {% else %}
+            <div class="book-cover-title" style="color:{{ r.cover_color }}">{{ r.title|truncatechars:32 }}</div>
+          {% endif %}
+          <span class="remote-badge">{% if r.source == 'openlibrary' %}Open Library{% else %}Google Books{% endif %}</span>
+        </div>
+        <div class="book-title">{{ r.title|truncatechars:42 }}</div>
+        <div class="book-author">{{ r.author|truncatechars:32 }}</div>
+      </div>
+    {% endfor %}
+  </div>
+{% endif %}
+
+{% if not books and not remote_results %}
+  <div class="empty-state">
+    <i class="ti ti-mood-empty"></i>
+    <h3>No books found</h3>
+    <p>{% if query %}Try a different search term or genre.{% else %}Try searching for a title or author.{% endif %}</p>
+  </div>
+{% endif %}
+{% endblock %}

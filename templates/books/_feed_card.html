@@ -1,0 +1,43 @@
+{# Renders an Activity in feed format. Variables: activity #}
+<div class="feed-card">
+  <div class="feed-header">
+    <div class="user-avatar" style="background:linear-gradient(135deg,{{ activity.user.profile.avatar_color_a|default:'#C4922A' }},{{ activity.user.profile.avatar_color_b|default:'#8B3E2A' }})">
+      {{ activity.user.profile.initials|default:'U' }}
+    </div>
+    <div class="feed-meta">
+      <div class="feed-user">{{ activity.user.profile.display_name|default:activity.user.username }}</div>
+      <div class="feed-time">{{ activity.created_at|timesince }} ago</div>
+    </div>
+  </div>
+  <div class="feed-action">
+    <strong>{{ activity.user.profile.display_name|default:activity.user.username }}</strong>
+    {{ activity.get_action_display }}
+    <strong>{{ activity.book.title }}</strong>
+  </div>
+  <div class="feed-book" onclick="openBook({{ activity.book.id }})">
+    <div class="feed-cover" style="background:{{ activity.book.cover_bg }};color:{{ activity.book.cover_color }}">{{ activity.book.title }}</div>
+    <div class="feed-book-info">
+      <div class="feed-book-title">{{ activity.book.title }}</div>
+      <div class="feed-book-author">{{ activity.book.author }}</div>
+      {% if activity.stars %}
+        <div style="display:flex;gap:2px">
+          {% for i in "12345" %}
+            {% if forloop.counter <= activity.stars %}
+              <i class="ti ti-star-filled star-icon"></i>
+            {% else %}
+              <i class="ti ti-star star-icon empty"></i>
+            {% endif %}
+          {% endfor %}
+        </div>
+      {% endif %}
+    </div>
+  </div>
+  {% if activity.review %}
+    <div class="feed-review">"{{ activity.review }}"</div>
+  {% endif %}
+  <div class="feed-actions">
+    <button class="feed-btn" onclick="likePost(this)"><i class="ti ti-heart"></i><span>Like</span></button>
+    <button class="feed-btn"><i class="ti ti-message-circle"></i><span>Comment</span></button>
+    <button class="feed-btn" onclick="openBook({{ activity.book.id }})"><i class="ti ti-plus"></i><span>Add to shelf</span></button>
+  </div>
+</div>

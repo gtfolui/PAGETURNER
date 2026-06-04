@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ target_user.profile.display_name }} · PageTurner{% endblock %}
+
+{% block content %}
+<div class="profile-header">
+  {% if target_user.profile.picture %}
+    <img src="{{ target_user.profile.picture.url }}" alt="{{ target_user.profile.display_name }}" class="profile-avatar">
+  {% else %}
+    <div class="profile-avatar"
+         style="background:linear-gradient(135deg,{{ target_user.profile.avatar_color_a }},{{ target_user.profile.avatar_color_b }})">
+      {{ target_user.profile.initials }}
+    </div>
+  {% endif %}
+  <div class="profile-info">
+    <h1 class="profile-name">{{ target_user.profile.display_name }}</h1>
+    <div class="profile-meta">
+      <span><i class="ti ti-user"></i> @{{ target_user.username }}</span>
+      {% if target_user.profile.location %}
+        <span><i class="ti ti-map-pin"></i> {{ target_user.profile.location }}</span>
+      {% endif %}
+      <span><i class="ti ti-calendar"></i> Joined {{ target_user.profile.joined_year }}</span>
+    </div>
+    {% if target_user.profile.bio %}
+      <p class="profile-bio">{{ target_user.profile.bio }}</p>
+    {% endif %}
+  </div>
+  {% if is_own_profile %}
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <a href="{% url 'accounts:profile_edit' %}" class="btn-primary">
+        <i class="ti ti-edit"></i> Edit profile
+      </a>
+      <a href="{% url 'accounts:logout' %}" class="btn-secondary">
+        <i class="ti ti-logout"></i> Sign out
+      </a>
+    </div>
+  {% else %}
+    <button class="btn-primary follow-btn" onclick="toggleFollow(this, {{ target_user.id }})">
+      <i class="ti ti-user-plus"></i> Follow
+    </button>
+  {% endif %}
+</div>
+
+<div class="stats-grid">
+  <div class="stat-card">
+    <div class="stat-val">{{ books_read_count }}</div>
+    <div class="stat-label">Books read</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-val">{{ reviews_count }}</div>
+    <div class="stat-label">Reviews written</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-val">{{ friend_count }}</div>
+    <div class="stat-label">Friends</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-val" id="streakVal">—</div>
+    <div class="stat-label">Day streak <i class="ti ti-flame" style="color:var(--pt-rust)"></i></div>
+  </div>
+</div>
+
+{# Reading activity heatmap #}
+<div class="section-title" style="margin-top:32px">Reading activity</div>
+<div class="heatmap-wrap">
+  <div class="heatmap" id="heatmap" data-user="{{ target_user.username }}">
+    <div class="heatmap-loading">Loading activity…</div>
+  </div>
+  <div class="heatmap-legend">
+    Less
+    <span class="hm-cell lvl0"></span><span class="hm-cell lvl1"></span>
+    <span class="hm-cell lvl2"></span><span class="hm-cell lvl3"></span><span class="hm-cell lvl4"></span>
+    More
+  </div>
+</div>
+
+<div class="section-title" style="margin-top:32px">
+  {% if is_own_profile %}Your recent reads{% else %}{{ target_user.profile.display_name }}'s recent reads{% endif %}
+</div>
+
+{% if read_books %}
+  <div class="book-grid">
+    {% for ub in read_books %}
+      {% with book=ub.book %}
+        {% include "books/_book_card.html" %}
+      {% endwith %}
+    {% endfor %}
+  </div>
+{% else %}
+  <div class="empty-state">
+    <i class="ti ti-mood-empty" style="font-size:48px;color:var(--color-text-tertiary)"></i>
+    <p style="color:var(--color-text-secondary);margin-top:12px">No finished books yet.</p>
+    {% if is_own_profile %}
+      <a href="{% url 'books:discover' %}" class="btn-primary" style="margin-top:16px">
+        <i class="ti ti-compass"></i> Discover books
+      </a>
+    {% endif %}
+  </div>
+{% endif %}
+{% endblock %}

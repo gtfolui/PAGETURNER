@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block title %}Edit profile · PageTurner{% endblock %}
+
+{% block content %}
+<div class="page-title">Edit profile</div>
+<div class="page-sub">Update your details and upload an avatar.</div>
+
+<form method="post" enctype="multipart/form-data" class="profile-edit-form" style="max-width:560px">
+  {% csrf_token %}
+
+  <div class="profile-edit-avatar">
+    {% if user.profile.picture %}
+      <img src="{{ user.profile.picture.url }}" alt="Current avatar" class="avatar-preview">
+    {% else %}
+      <div class="avatar-preview avatar-fallback"
+           style="background:linear-gradient(135deg,{{ user.profile.avatar_color_a }},{{ user.profile.avatar_color_b }})">
+        {{ user.profile.initials }}
+      </div>
+    {% endif %}
+    <div class="field-label" style="margin-top:12px">Profile picture</div>
+    {{ form.picture }}
+    <small style="color:var(--color-text-secondary);font-size:11px">
+      JPG or PNG, ideally square. Leave empty to keep the current one.
+    </small>
+  </div>
+
+  <div class="form-grid">
+    <div>
+      <div class="field-label">First name</div>
+      {{ form.first_name }}
+    </div>
+    <div>
+      <div class="field-label">Last name</div>
+      {{ form.last_name }}
+    </div>
+  </div>
+
+  <div class="field-label">Email</div>
+  {{ form.email }}
+
+  <div class="field-label">Bio</div>
+  {{ form.bio }}
+
+  <div class="field-label">Location</div>
+  {{ form.location }}
+
+  {% if form.errors %}
+    <ul class="message-list" style="margin-top:14px">
+      {% for f, errors in form.errors.items %}
+        {% for err in errors %}<li class="message error">{{ f }}: {{ err }}</li>{% endfor %}
+      {% endfor %}
+    </ul>
+  {% endif %}
+
+  <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:20px">
+    <a href="{% url 'books:profile' %}" class="btn-secondary">Cancel</a>
+    <button type="submit" class="btn-primary">Save changes</button>
+  </div>
+</form>
+{% endblock %}

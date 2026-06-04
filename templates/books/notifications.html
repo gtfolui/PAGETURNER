@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}Notifications · PageTurner{% endblock %}
+
+{% block content %}
+<div class="page-title">Notifications</div>
+<div class="page-sub" id="notif-sub">
+  {% if unread_notif_count %}
+    You have {{ unread_notif_count }} unread notification{{ unread_notif_count|pluralize }}.
+  {% else %}
+    All caught up!
+  {% endif %}
+</div>
+
+<div class="notification-list">
+  {% for n in notifications %}
+    <div class="notif {% if not n.is_read %}unread{% endif %}" onclick="markNotifRead(this, {{ n.id }})">
+      <div class="notif-icon"><i class="ti {{ n.icon }}"></i></div>
+      <div>
+        <div class="notif-text">{{ n.text }}</div>
+        <div class="notif-time">{{ n.created_at|timesince }} ago</div>
+      </div>
+    </div>
+  {% empty %}
+    <div class="empty-state">
+      <i class="ti ti-bell-off"></i>
+      <h3>No notifications</h3>
+      <p>We'll let you know when something interesting happens.</p>
+    </div>
+  {% endfor %}
+</div>
+{% endblock %}
