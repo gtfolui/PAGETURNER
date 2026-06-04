@@ -43,8 +43,9 @@ SECRET_KEY = os.environ.get(
 DEBUG = env_bool("DEBUG", True)
 
 # Updated ALLOWED_HOSTS for PythonAnywhere deployment
+# Updated ALLOWED_HOSTS for your new pialuisa account
 ALLOWED_HOSTS = [
-    'gtfolui.pythonanywhere.com', 
+    'pialuisa.pythonanywhere.com', 
     '127.0.0.1', 
     'localhost', 
     '0.0.0.0'
