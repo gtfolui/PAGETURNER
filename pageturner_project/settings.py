@@ -7,7 +7,6 @@ import os
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # ---------------------------------------------------------------------------
 # Load .env file automatically if present (for local dev convenience)
 # ---------------------------------------------------------------------------
@@ -25,13 +24,11 @@ if _env_file.exists():
             value = value.strip().strip('"').strip("'")
             os.environ.setdefault(key.strip(), value)
 
-
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
 def env_bool(name: str, default: bool = False) -> bool:
     return os.environ.get(name, str(default)).lower() in ("1", "true", "yes", "on")
-
 
 # ---------------------------------------------------------------------------
 # Core
@@ -42,13 +39,11 @@ SECRET_KEY = os.environ.get(
 )
 DEBUG = env_bool("DEBUG", True)
 
-# Updated ALLOWED_HOSTS for PythonAnywhere deployment
-# Updated ALLOWED_HOSTS for your new pialuisa account
 ALLOWED_HOSTS = [
-    'pialuisa.pythonanywhere.com', 
-    '127.0.0.1', 
-    'localhost', 
-    '0.0.0.0'
+    'pialuisa.pythonanywhere.com',
+    '127.0.0.1',
+    'localhost',
+    '0.0.0.0',
 ]
 RENDER_EXTERNAL_HOSTNAME = os.environ.get("RENDER_EXTERNAL_HOSTNAME")
 if RENDER_EXTERNAL_HOSTNAME:
@@ -59,7 +54,8 @@ CSRF_TRUSTED_ORIGINS = [
     for o in os.environ.get("CSRF_TRUSTED_ORIGINS", "").split(",")
     if o.strip()
 ]
-
+if "https://pialuisa.pythonanywhere.com" not in CSRF_TRUSTED_ORIGINS:
+    CSRF_TRUSTED_ORIGINS.append("https://pialuisa.pythonanywhere.com")
 
 # ---------------------------------------------------------------------------
 # Apps
@@ -123,7 +119,6 @@ AUTHENTICATION_BACKENDS = [
     "allauth.account.auth_backends.AuthenticationBackend",
 ]
 
-
 # ---------------------------------------------------------------------------
 # Database
 # ---------------------------------------------------------------------------
@@ -133,7 +128,6 @@ DATABASES = {
         "NAME": BASE_DIR / "db.sqlite3",
     }
 }
-
 if os.environ.get("DATABASE_URL"):
     try:
         import dj_database_url
@@ -143,7 +137,6 @@ if os.environ.get("DATABASE_URL"):
         )
     except ImportError:
         pass
-
 
 # ---------------------------------------------------------------------------
 # Password validation
@@ -156,7 +149,6 @@ AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
 
-
 # ---------------------------------------------------------------------------
 # i18n
 # ---------------------------------------------------------------------------
@@ -164,7 +156,6 @@ LANGUAGE_CODE = "en-us"
 TIME_ZONE = os.environ.get("TIME_ZONE", "UTC")
 USE_I18N = True
 USE_TZ = True
-
 
 # ---------------------------------------------------------------------------
 # Static / Media
@@ -177,10 +168,8 @@ STATICFILES_STORAGE = (
     if not DEBUG
     else "django.contrib.staticfiles.storage.StaticFilesStorage"
 )
-
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
-
 
 # ---------------------------------------------------------------------------
 # Auth redirects
@@ -189,20 +178,24 @@ LOGIN_URL = "accounts:login"
 LOGIN_REDIRECT_URL = "books:home"
 LOGOUT_REDIRECT_URL = "accounts:login"
 
-
 # ---------------------------------------------------------------------------
 # django-allauth config
 # ---------------------------------------------------------------------------
-ACCOUNT_EMAIL_VERIFICATION = "none"   # change to "mandatory" when email is set up
+ACCOUNT_EMAIL_VERIFICATION = "none"          # change to "mandatory" when email is set up
 ACCOUNT_LOGIN_METHODS = {"username"}
-ACCOUNT_SIGNUP_FIELDS = ["username*", "email", "password1*", "password2*"]
+ACCOUNT_SIGNUP_FIELDS = ["username*", "email*", "password1*", "password2*"]
+ACCOUNT_LOGOUT_REDIRECT_URL = "accounts:login"
+
 SOCIALACCOUNT_AUTO_SIGNUP = True
 SOCIALACCOUNT_LOGIN_ON_GET = True
+SOCIALACCOUNT_EMAIL_AUTHENTICATION = True
+SOCIALACCOUNT_EMAIL_AUTHENTICATION_AUTO_CONNECT = True
 
 SOCIALACCOUNT_PROVIDERS = {
     "google": {
         "SCOPE": ["profile", "email"],
         "AUTH_PARAMS": {"access_type": "online"},
+        "OAUTH_PKCE_ENABLED": True,
         "APP": {
             "client_id": os.environ.get("GOOGLE_CLIENT_ID", ""),
             "secret": os.environ.get("GOOGLE_CLIENT_SECRET", ""),
@@ -210,7 +203,6 @@ SOCIALACCOUNT_PROVIDERS = {
         },
     }
 }
-
 
 # ---------------------------------------------------------------------------
 # Security (kicks in only when DEBUG=False)
@@ -227,7 +219,6 @@ if not DEBUG:
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-
 # ---------------------------------------------------------------------------
 # Email
 # ---------------------------------------------------------------------------
@@ -241,7 +232,6 @@ EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER", "")
 EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD", "")
 EMAIL_USE_TLS = env_bool("EMAIL_USE_TLS", True)
 DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL", "PageTurner <noreply@pageturner.local>")
-
 
 # ---------------------------------------------------------------------------
 # PageTurner feature flags
