@@ -7,7 +7,6 @@ from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils import timezone
-
 from .forms import LoginForm, SignUpForm
 
 
@@ -36,7 +35,6 @@ def _send_verification_email(request, user):
 def login_view(request):
     if request.user.is_authenticated:
         return redirect("books:home")
-
     form = LoginForm(request.POST or None)
     if request.method == "POST" and form.is_valid():
         user = authenticate(
@@ -45,24 +43,20 @@ def login_view(request):
             password=form.cleaned_data["password"],
         )
         if user is not None:
-            # Fixed: explicitly added the authentication backend path
             login(request, user, backend='django.contrib.auth.backends.ModelBackend')
             next_url = request.GET.get("next") or reverse("books:home")
             return redirect(next_url)
         messages.error(request, "Invalid username or password.")
-
-    return render(request, "accounts/login.html", {"form": form})
+    return render(request, "account/login.html", {"form": form})
 
 
 def signup_view(request):
     if request.user.is_authenticated:
         return redirect("books:home")
-
     form = SignUpForm(request.POST or None)
     if request.method == "POST" and form.is_valid():
         user = form.save()
         _send_verification_email(request, user)
-        # Fixed: explicitly added the authentication backend path
         login(request, user, backend='django.contrib.auth.backends.ModelBackend')
         if settings.REQUIRE_EMAIL_VERIFICATION:
             messages.info(
@@ -72,8 +66,7 @@ def signup_view(request):
         else:
             messages.success(request, f"Welcome to PageTurner, {user.first_name}!")
         return redirect("books:home")
-
-    return render(request, "accounts/signup.html", {"form": form})
+    return render(request, "account/signup.html", {"form": form})
 
 
 @login_required
@@ -85,8 +78,7 @@ def logout_view(request):
 
 def verify_email(request, token):
     """Public link clicked from the verification email."""
-    from .models import UserProfile  # local import avoids circular reference
-
+    from .models import UserProfile
     profile = get_object_or_404(UserProfile, email_verification_token=token)
     if not profile.is_email_verified:
         profile.is_email_verified = True
@@ -119,4 +111,4 @@ def profile_edit(request):
             return redirect("books:profile")
     else:
         form = ProfileEditForm(instance=profile, user=request.user)
-    return render(request, "accounts/profile_edit.html", {"form": form})
+    return render(request, "account/profile_edit.html", {"form": form})
