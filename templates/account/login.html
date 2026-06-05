@@ -1,19 +1,13 @@
 {% extends "base.html" %}
 {% load static %}
-
 {% block title %}Sign in · PageTurner{% endblock %}
-
 {% block auth_content %}
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
-
 body{font-family:'Plus Jakarta Sans',sans-serif;background:#0f0f1a;min-height:100vh;display:flex;align-items:center;justify-content:center}
-
 .pt-wrap{min-height:100vh;width:100%;display:flex;align-items:center;justify-content:center;background:#0f0f1a;padding:20px}
 .pt-card{display:flex;width:100%;max-width:900px;min-height:560px;border-radius:20px;overflow:hidden;box-shadow:0 25px 60px rgba(0,0,0,.55)}
-
-/* Left */
 .pt-left{flex:0 0 42%;background:linear-gradient(135deg,#1a1035 0%,#2d1b69 50%,#1a1035 100%);display:flex;flex-direction:column;justify-content:space-between;padding:36px;position:relative;overflow:hidden}
 .pt-left::before{content:'';position:absolute;top:-80px;right:-80px;width:300px;height:300px;background:radial-gradient(circle,rgba(120,80,255,.3) 0%,transparent 70%);border-radius:50%;pointer-events:none}
 .pt-left::after{content:'';position:absolute;bottom:-60px;left:-60px;width:250px;height:250px;background:radial-gradient(circle,rgba(80,120,255,.2) 0%,transparent 70%);border-radius:50%;pointer-events:none}
@@ -29,33 +23,25 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:#0f0f1a;min-height:10
 .pt-dots{display:flex;gap:6px}
 .pt-dot{width:24px;height:4px;border-radius:2px;background:rgba(255,255,255,.25)}
 .pt-dot.on{background:#7c5cfc;width:32px}
-
-/* Right */
 .pt-right{flex:1;background:#13131f;padding:48px 44px;display:flex;flex-direction:column;justify-content:center;overflow-y:auto}
 .pt-heading{font-size:1.8rem;font-weight:700;color:#fff;margin-bottom:6px;letter-spacing:-.3px}
 .pt-tagline-sub{font-size:.875rem;color:rgba(255,255,255,.45);margin-bottom:28px}
 .pt-tagline-sub a{color:#7c5cfc;font-weight:600;text-decoration:none}
 .pt-tagline-sub a:hover{text-decoration:underline}
-
 .pt-error{background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.3);color:#ff8080;border-radius:10px;padding:10px 14px;font-size:13px;margin-bottom:16px}
-
 .pt-social{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:11px 14px;border-radius:10px;border:1.5px solid #2a2a3e;background:#1e1e2e;color:rgba(255,255,255,.8);font-size:.875rem;font-weight:600;font-family:inherit;cursor:pointer;text-decoration:none;transition:border-color .2s,background .2s,color .2s;margin-bottom:4px}
 .pt-social:hover{border-color:#7c5cfc;background:#252535;color:#fff}
 .pt-social svg{flex-shrink:0}
-
 .pt-divider{display:flex;align-items:center;gap:12px;margin:18px 0;color:rgba(255,255,255,.25);font-size:.78rem}
 .pt-divider::before,.pt-divider::after{content:'';flex:1;height:1px;background:#2a2a3e}
-
 .pt-field{display:flex;flex-direction:column;gap:5px;margin-bottom:14px}
 .pt-field label{font-size:.75rem;font-weight:500;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.5px}
 .pt-field input{padding:11px 14px;border:1.5px solid #2a2a3e;border-radius:10px;font-family:inherit;font-size:.9rem;background:#1e1e2e;color:#fff;transition:border-color .2s,box-shadow .2s;width:100%}
 .pt-field input::placeholder{color:rgba(255,255,255,.22)}
 .pt-field input:focus{outline:none;border-color:#7c5cfc;box-shadow:0 0 0 3px rgba(124,92,252,.15)}
 .pt-errors{list-style:none;font-size:.78rem;color:#ff8080;margin-top:3px}
-
 .pt-submit{width:100%;padding:12px;border:none;border-radius:10px;background:#7c5cfc;color:#fff;font-size:.95rem;font-weight:700;font-family:inherit;cursor:pointer;transition:background .2s,box-shadow .2s;margin-top:4px}
 .pt-submit:hover{background:#6a4de8;box-shadow:0 6px 20px rgba(124,92,252,.4)}
-
 @media(max-width:680px){
   .pt-card{flex-direction:column;max-width:440px;min-height:unset}
   .pt-left{flex:0 0 auto;min-height:180px;padding:24px}
@@ -63,10 +49,8 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:#0f0f1a;min-height:10
   .pt-right{padding:32px 24px}
 }
 </style>
-
 <div class="pt-wrap">
   <div class="pt-card">
-
     <div class="pt-left">
       <div class="pt-brand">
         <div class="pt-brand-icon">📖</div>
@@ -85,41 +69,39 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:#0f0f1a;min-height:10
         </div>
       </div>
     </div>
-
     <div class="pt-right">
       <h1 class="pt-heading">Welcome back</h1>
       <p class="pt-tagline-sub">Don't have an account? <a href="{% url 'accounts:signup' %}">Sign up</a></p>
-
       {% if messages %}
         {% for m in messages %}<div class="pt-error">{{ m }}</div>{% endfor %}
       {% endif %}
       {% if form.non_field_errors %}
         <div class="pt-error">{{ form.non_field_errors|join:" " }}</div>
       {% endif %}
-
       <a href="/accounts/google/login/" class="pt-social">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
         Continue with Google
       </a>
-
       <div class="pt-divider">or sign in with username</div>
-
       <form method="post" novalidate>
         {% csrf_token %}
         <div class="pt-field">
-          <label for="id_username">Username</label>
-          {{ form.username }}
-          {% if form.username.errors %}<ul class="pt-errors">{% for e in form.username.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+          <label for="id_login">Username</label>
+          {{ form.login }}
+          {% if form.login.errors %}
+            <ul class="pt-errors">{% for e in form.login.errors %}<li>{{ e }}</li>{% endfor %}</ul>
+          {% endif %}
         </div>
         <div class="pt-field">
           <label for="id_password">Password</label>
           {{ form.password }}
-          {% if form.password.errors %}<ul class="pt-errors">{% for e in form.password.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+          {% if form.password.errors %}
+            <ul class="pt-errors">{% for e in form.password.errors %}<li>{{ e }}</li>{% endfor %}</ul>
+          {% endif %}
         </div>
         <button type="submit" class="pt-submit">Sign in</button>
       </form>
     </div>
-
   </div>
 </div>
 {% endblock %}
