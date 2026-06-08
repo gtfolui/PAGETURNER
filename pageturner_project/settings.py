@@ -182,7 +182,7 @@ LOGOUT_REDIRECT_URL = "accounts:login"
 # ---------------------------------------------------------------------------
 # django-allauth config
 # ---------------------------------------------------------------------------
-ACCOUNT_EMAIL_VERIFICATION = "none"          # change to "mandatory" when email is set up
+ACCOUNT_EMAIL_VERIFICATION = "none"
 ACCOUNT_LOGIN_METHODS = {"username"}
 ACCOUNT_SIGNUP_FIELDS = ["username*", "email*", "password1*", "password2*"]
 ACCOUNT_LOGOUT_REDIRECT_URL = "accounts:login"
@@ -197,6 +197,11 @@ SOCIALACCOUNT_PROVIDERS = {
         "SCOPE": ["profile", "email"],
         "AUTH_PARAMS": {"access_type": "online"},
         "OAUTH_PKCE_ENABLED": True,
+        "APP": {
+            "client_id": os.environ.get("GOOGLE_CLIENT_ID", ""),
+            "secret": os.environ.get("GOOGLE_CLIENT_SECRET", ""),
+            "key": "",
+        },
     }
 }
 
@@ -240,6 +245,10 @@ PROFANITY_BLOCKLIST = [
     for w in os.environ.get("PROFANITY_BLOCKLIST", "").split(",")
     if w.strip()
 ]
+
+# ---------------------------------------------------------------------------
+# Progressive Web App (PWA)
+# ---------------------------------------------------------------------------
 PWA_APP_NAME = 'PageTurner'
 PWA_APP_DESCRIPTION = "Track books, build your world."
 PWA_APP_THEME_COLOR = '#7c5cfc'
