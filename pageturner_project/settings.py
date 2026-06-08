@@ -4,9 +4,7 @@ Production-ready: configurable via environment variables.
 """
 from pathlib import Path
 import os
-
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 # ---------------------------------------------------------------------------
 # Load .env file automatically if present (for local dev convenience)
 # ---------------------------------------------------------------------------
@@ -23,13 +21,11 @@ if _env_file.exists():
             key, _, value = line.partition("=")
             value = value.strip().strip('"').strip("'")
             os.environ.setdefault(key.strip(), value)
-
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
 def env_bool(name: str, default: bool = False) -> bool:
     return os.environ.get(name, str(default)).lower() in ("1", "true", "yes", "on")
-
 # ---------------------------------------------------------------------------
 # Core
 # ---------------------------------------------------------------------------
@@ -38,7 +34,6 @@ SECRET_KEY = os.environ.get(
     "django-insecure-change-me-in-production-please-set-SECRET_KEY-env-var",
 )
 DEBUG = env_bool("DEBUG", True)
-
 ALLOWED_HOSTS = [
     'pialuisa.pythonanywhere.com',
     '127.0.0.1',
@@ -48,7 +43,6 @@ ALLOWED_HOSTS = [
 RENDER_EXTERNAL_HOSTNAME = os.environ.get("RENDER_EXTERNAL_HOSTNAME")
 if RENDER_EXTERNAL_HOSTNAME:
     ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
-
 CSRF_TRUSTED_ORIGINS = [
     o.strip()
     for o in os.environ.get("CSRF_TRUSTED_ORIGINS", "").split(",")
@@ -56,7 +50,6 @@ CSRF_TRUSTED_ORIGINS = [
 ]
 if "https://pialuisa.pythonanywhere.com" not in CSRF_TRUSTED_ORIGINS:
     CSRF_TRUSTED_ORIGINS.append("https://pialuisa.pythonanywhere.com")
-
 # ---------------------------------------------------------------------------
 # Apps
 # ---------------------------------------------------------------------------
@@ -79,9 +72,7 @@ INSTALLED_APPS = [
     "books",
     "pwa",
 ]
-
 SITE_ID = 1
-
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
@@ -93,9 +84,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "allauth.account.middleware.AccountMiddleware",
 ]
-
 ROOT_URLCONF = "pageturner_project.urls"
-
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
@@ -112,14 +101,11 @@ TEMPLATES = [
         },
     },
 ]
-
 WSGI_APPLICATION = "pageturner_project.wsgi.application"
-
 AUTHENTICATION_BACKENDS = [
     "django.contrib.auth.backends.ModelBackend",
     "allauth.account.auth_backends.AuthenticationBackend",
 ]
-
 # ---------------------------------------------------------------------------
 # Database
 # ---------------------------------------------------------------------------
@@ -138,7 +124,6 @@ if os.environ.get("DATABASE_URL"):
         )
     except ImportError:
         pass
-
 # ---------------------------------------------------------------------------
 # Password validation
 # ---------------------------------------------------------------------------
@@ -149,7 +134,6 @@ AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
-
 # ---------------------------------------------------------------------------
 # i18n
 # ---------------------------------------------------------------------------
@@ -157,7 +141,6 @@ LANGUAGE_CODE = "en-us"
 TIME_ZONE = os.environ.get("TIME_ZONE", "UTC")
 USE_I18N = True
 USE_TZ = True
-
 # ---------------------------------------------------------------------------
 # Static / Media
 # ---------------------------------------------------------------------------
@@ -171,14 +154,12 @@ STATICFILES_STORAGE = (
 )
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
-
 # ---------------------------------------------------------------------------
 # Auth redirects
 # ---------------------------------------------------------------------------
 LOGIN_URL = "accounts:login"
 LOGIN_REDIRECT_URL = "books:home"
 LOGOUT_REDIRECT_URL = "accounts:login"
-
 # ---------------------------------------------------------------------------
 # django-allauth config
 # ---------------------------------------------------------------------------
@@ -186,25 +167,17 @@ ACCOUNT_EMAIL_VERIFICATION = "none"
 ACCOUNT_LOGIN_METHODS = {"username"}
 ACCOUNT_SIGNUP_FIELDS = ["username*", "email*", "password1*", "password2*"]
 ACCOUNT_LOGOUT_REDIRECT_URL = "accounts:login"
-
 SOCIALACCOUNT_AUTO_SIGNUP = True
 SOCIALACCOUNT_LOGIN_ON_GET = True
 SOCIALACCOUNT_EMAIL_AUTHENTICATION = True
 SOCIALACCOUNT_EMAIL_AUTHENTICATION_AUTO_CONNECT = True
-
 SOCIALACCOUNT_PROVIDERS = {
     "google": {
         "SCOPE": ["profile", "email"],
         "AUTH_PARAMS": {"access_type": "online"},
         "OAUTH_PKCE_ENABLED": True,
-        "APP": {
-            "client_id": os.environ.get("GOOGLE_CLIENT_ID", ""),
-            "secret": os.environ.get("GOOGLE_CLIENT_SECRET", ""),
-            "key": "",
-        },
     }
 }
-
 # ---------------------------------------------------------------------------
 # Security (kicks in only when DEBUG=False)
 # ---------------------------------------------------------------------------
@@ -217,9 +190,7 @@ if not DEBUG:
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_HSTS_PRELOAD = True
     SECURE_CONTENT_TYPE_NOSNIFF = True
-
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
-
 # ---------------------------------------------------------------------------
 # Email
 # ---------------------------------------------------------------------------
@@ -233,7 +204,6 @@ EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER", "")
 EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD", "")
 EMAIL_USE_TLS = env_bool("EMAIL_USE_TLS", True)
 DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL", "PageTurner <noreply@pageturner.local>")
-
 # ---------------------------------------------------------------------------
 # PageTurner feature flags
 # ---------------------------------------------------------------------------
@@ -245,7 +215,6 @@ PROFANITY_BLOCKLIST = [
     for w in os.environ.get("PROFANITY_BLOCKLIST", "").split(",")
     if w.strip()
 ]
-
 # ---------------------------------------------------------------------------
 # Progressive Web App (PWA)
 # ---------------------------------------------------------------------------
